@@ -268,6 +268,33 @@ loocv_mse <- mean(squared_errors)
 cat("LOOCV Mean Squared Error:", loocv_mse, "\n")
 ```
 
+```{r}
+
+squared_errors <- numeric(n)
+
+# Perform LOOCV
+for (i in 1:n) {
+  # Split the data: exclude the i-th observation
+  train_data <- cleanWeight[-i, ]
+  test_data <- cleanWeight[i, , drop = FALSE]
+  
+  # Fit the model on the training set
+  loocv_model <- lm(weightChangePerWeek ~ Gender + 
+                      I((meanDCC - DailyCaloriesConsumed)^3) + SleepQuality + StressLevel,
+                    data = train_data)
+  
+  # Predict the response for the left-out observation
+  predicted <- predict(reg3, newdata = test_data)
+  
+  # Calculate the squared error for the i-th observation
+  squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
+}
+
+# Compute the LOOCV MSE
+loocv_mse <- mean(squared_errors)
+cat("LOOCV Mean Squared Error:", loocv_mse, "\n")
+```
+
 LOOCV is a test that treat 1 data as the test set and 99 as the training set,
 
 since we have 100 data, so each data has a chance to become the "test set"
