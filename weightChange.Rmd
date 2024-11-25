@@ -151,7 +151,9 @@ print(vif_values)
 
 -   **VIF \> 10**: High multicollinearity (may require remedial measures, such as removing variables or PCA).
 
-## Changed and Added based on lab 8
+# Start Fiting
+
+## Simple linear model method Added based on lab 8
 
 This is one way ignored the quadratic, cubic, interaction...
 
@@ -223,9 +225,11 @@ cat("LOOCV Mean Squared Error:", loocv_mse, "\n")
 
 # Not So sure, start now
 
+## Start fitting, and eliminate variables
+
 How should I deal with interaction, cubic things
 
-## Start fitting, and eliminate variables
+### Figure out interaction based on plot and test
 
 This is second way, test-based, eliminate according to p-value
 
@@ -261,6 +265,10 @@ summary(regWithoutInteraction)
 summary(regWithInteraction)
 ```
 
+## Finish for interaction, start dealing which variable should left
+
+based on p-value
+
 ```{r}
 reg1 <- lm(weightChangePerWeek ~ Age + Gender + BMRCalories + DailyCaloriesConsumed + StressLevel + SleepQuality, cleanWeight)
 summary(reg1)
@@ -284,8 +292,9 @@ p <- length(coef(reg2))
 n <- nrow(cleanWeight)        
 
 Cp <- (RSS_model / sigma2) + 2 * p - n
-Cp
 #valid CP 5+1
+
+par(mfrow = c(2, 2)) 
 plot(reg2)
 ```
 
@@ -297,12 +306,13 @@ p <- length(coef(reg3))
 n <- nrow(cleanWeight)        
 
 Cp <- (RSS_model / sigma2) + 2 * p - n
-Cp
 #Valid CP 4+1
+
+par(mfrow = c(2, 2)) 
 plot(reg3)
 ```
 
-### Previous residual plot seems shows some pattern
+### Previous residual plot seems shows some pattern, Start thinking about other model fit, such cubic, quadratic
 
 ```{r}
 
@@ -314,6 +324,8 @@ summary(reg_cubic)
 ```
 
 ```{r}
+
+par(mfrow = c(2, 2)) 
 plot(reg_cubic)
 ```
 
@@ -326,30 +338,8 @@ squared_errors <- numeric(n)
 for (i in 1:n) {
   train_data <- cleanWeight[-i, ]
   test_data <- cleanWeight[i, , drop = FALSE]
-  
-  loocv_model <- lm(weightChangePerWeek ~ Gender + 
-                      I((meanDCC - DailyCaloriesConsumed)^3) + SleepQuality + StressLevel,
-                    data = train_data)
-  
+  loocv_model <- lm(weightChangePerWeek ~ Gender + I((meanDCC - DailyCaloriesConsumed)^3) + SleepQuality + StressLevel, data = train_data)
   predicted <- predict(loocv_model, newdata = test_data)
-  
-  squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
-}
-
-loocv_mse <- mean(squared_errors)
-cat("LOOCV Mean Squared Error:", loocv_mse, "\n")
-```
-
-```{r}
-
-squared_errors <- numeric(n)
-
-for (i in 1:n) {
-  train_data <- cleanWeight[-i, ]
-  test_data <- cleanWeight[i, , drop = FALSE]
-  
-  predicted <- predict(regLab, newdata = test_data)
-  
   squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
 }
 
