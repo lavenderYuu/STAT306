@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(leaps)
 library(dplyr)
 library(ggplot2)
 library(car)
@@ -150,7 +151,83 @@ print(vif_values)
 
 -   **VIF \> 10**: High multicollinearity (may require remedial measures, such as removing variables or PCA).
 
+## Changed and Added based on lab 8
+
+This is one way ignored the quadratic, cubic, interaction...
+
+```{r}
+
+s = regsubsets(weightChangePerWeek~., data=cleanWeight, method="exhaustive")
+ss <- summary(s)
+ss
+```
+
+```{r}
+num_predictors <- rownames(ss$which)
+
+
+plot(num_predictors, ss$rsq, type = "b", pch = 19,
+     main = "R^2 vs Number of Predictors",
+     xlab = "Number of Predictors", ylab = "R^2")
+
+# Plot Adjusted R^2
+plot(num_predictors, ss$adjr2, type = "b", pch = 19,
+     main = "Adjusted R^2 vs Number of Predictors",
+     xlab = "Number of Predictors", ylab = "Adjusted R^2")
+
+
+num_predictors <- 1:length(ss$cp) 
+cp_values <- ss$cp
+
+# Plot Cp 
+plot(num_predictors, cp_values, type = "b", pch = 19,
+     main = "Mallows' Cp vs Number of Predictors",
+     xlab = "Number of Predictors", ylab = "Cp")
+
+abline(a = 1, b = 1, col = "royalblue", lty = 2, lwd = 2)
+
+text(num_predictors, cp_values, labels = round(cp_values, 2), pos = 3, cex = 0.8, col = "black")
+
+```
+
+```{r}
+regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel + StressLevel + SleepQuality,  cleanWeight)
+summary(regLab)
+```
+
+```{r}
+ggplot(regLab, aes(x = regLab$fitted.values, y = regLab$residuals)) +
+  geom_point() +
+  labs(title = "Residuals vs. Fitted value",
+       x = "Fitted Value", y = "Residuals") +
+  theme_minimal()
+
+```
+
+```{r}
+
+squared_errors <- numeric(n)
+
+for (i in 1:n) {
+  train_data <- cleanWeight[-i, ]
+  test_data <- cleanWeight[i, , drop = FALSE]
+  
+  predicted <- predict(regLab, newdata = test_data)
+  
+  squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
+}
+
+loocv_mse <- mean(squared_errors)
+cat("LOOCV Mean Squared Error:", loocv_mse, "\n")
+```
+
+# Not So sure, start now
+
+How should I deal with interaction, cubic things
+
 ## Start fitting, and eliminate variables
+
+This is second way, test-based, eliminate according to p-value
 
 ```{r}
 predictors <- c("DailyCaloriesConsumed", "BMRCalories","PhysicalActivityLevel", "Age","SleepQuality", "StressLevel")
@@ -271,10 +348,7 @@ for (i in 1:n) {
   train_data <- cleanWeight[-i, ]
   test_data <- cleanWeight[i, , drop = FALSE]
   
-  loocv_model <- lm(weightChangePerWeek ~ Gender + 
-                      I((meanDCC - DailyCaloriesConsumed)^3) + SleepQuality + StressLevel,data = train_data)
-  
-  predicted <- predict(reg3, newdata = test_data)
+  predicted <- predict(regLab, newdata = test_data)
   
   squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
 }
