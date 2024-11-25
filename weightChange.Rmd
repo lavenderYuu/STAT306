@@ -170,7 +170,7 @@ for (var in predictors) {
 
 ```{r}
 regWithInteraction <- lm(weightChangePerWeek ~ Age + Gender * BMRCalories + DailyCaloriesConsumed + PhysicalActivityLevel + StressLevel + SleepQuality,  cleanWeight)
-regWithoutInteration <- lm(weightChangePerWeek ~ . , cleanWeight)
+regWithoutInteraction <- lm(weightChangePerWeek ~ . , cleanWeight)
 
 ```
 
@@ -181,7 +181,7 @@ summary(regWithoutInteraction)
 
 ```{r}
 
-summary(regWithInteration)
+summary(regWithInteraction)
 ```
 
 ```{r}
@@ -196,7 +196,7 @@ summary(reg2)
 
 ```{r}
 
-reg3 <- lm(weightChangePerWeek ~  Gender + DailyCaloriesConsumed + StressLevel + SleepQuality , cleanWeight_b)
+reg3 <- lm(weightChangePerWeek ~  Gender + DailyCaloriesConsumed + StressLevel + SleepQuality , cleanWeight)
 summary(reg3)
 ```
 
@@ -204,7 +204,7 @@ summary(reg3)
 RSS_model <- sum(resid(reg2)^2)         
 sigma2 <- summary(reg2)$sigma^2      
 p <- length(coef(reg2))                
-n <- nrow(cleanWeight_a)        
+n <- nrow(cleanWeight)        
 
 Cp <- (RSS_model / sigma2) + 2 * p - n
 Cp
@@ -217,7 +217,7 @@ plot(reg2)
 RSS_model <- sum(resid(reg3)^2)         
 sigma2 <- summary(reg3)$sigma^2      
 p <- length(coef(reg3))                
-n <- nrow(cleanWeight_b)        
+n <- nrow(cleanWeight)        
 
 Cp <- (RSS_model / sigma2) + 2 * p - n
 Cp
