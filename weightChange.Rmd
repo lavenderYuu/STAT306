@@ -7,7 +7,6 @@ date: "2024-11-24"
 ```{r setup, include=FALSE}
 ```
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -68,10 +67,44 @@ cleanWeight <- cleanWeight %>%
 head(cleanWeight)
 ```
 
+# See need transform or not
+
+```{r}
+model <- lm(weightChangePerWeek ~ ., data = cleanWeight)
+plot(model$fitted.values, residuals(model), 
+     main = "Residuals vs Fitted",
+     xlab = "Fitted Values", 
+     ylab = "Residuals")
+abline(h = 0, col = "red")
+```
+
+```{r}
+hist(cleanWeight$weightChangePerWeek, 
+     main = "Histogram of weightChangePerWeek", 
+     xlab = "Weight Change Per Week")
+```
+
+obvious pattern, left skewed need transform
+
+```{r}
+model <- lm(exp(weightChangePerWeek) ~ ., data = cleanWeight)
+plot(model$fitted.values, residuals(model), 
+     main = "Residuals vs Fitted",
+     xlab = "Fitted Values", 
+     ylab = "Residuals")
+abline(h = 0, col = "red")
+```
+
+```{r}
+expWeight <- cleanWeight %>%
+  mutate(expWeightCPW = exp(weightChangePerWeek)) %>%
+  subset(select = -c(weightChangePerWeek) )
+```
+
 ## Check multicollinearity
 
 ```{r}
-numeric_data <- cleanWeight %>%
+numeric_data <- expWeight %>%
   select(where(is.numeric))
 
 # Compute correlation matrix
@@ -92,35 +125,7 @@ ggplot(cor_melt, aes(x = Var1, y = Var2, fill = value)) +
 ```
 
 ```{r}
-cleanWeight <- cleanWeight %>%
-  select(-CurrentWeightLbs, -FinalWeightLbs) 
-
-#QUESTION: should I exclude Final weight?
-```
-
-```{r}
-
-numeric_data <- cleanWeight %>%
-  select(where(is.numeric))
-# Compute correlation matrix
-cor_matrix <- cor(numeric_data, use = "complete.obs")
-
-# Melt the correlation matrix for visualization
-cor_melt <- melt(cor_matrix)
-
-# Create the heatmap
-ggplot(cor_melt, aes(x = Var1, y = Var2, fill = value)) +
-  geom_tile() +
-  geom_text(aes(label = round(value, 2)), color = "black", size = 3) +
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, 
-                       limit = c(-1, 1), space = "Lab", name = "Correlation") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(title = "Correlation Heatmap with Values", x = "", y = "")
-```
-
-```{r}
-vif_model <- lm(weightChangePerWeek ~ ., data = cleanWeight)
+vif_model <- lm(expWeightCPW ~ ., data = expWeight)
 
 # Calculate VIF
 vif_values <- vif(vif_model)
@@ -131,11 +136,39 @@ print(vif_values)
 
 ```{r}
 #Incredible High VIF mulicolinearly so delete one vairable
-cleanWeight <- cleanWeight %>%
-  select(-DailyCaloricSurplusDeficit)
+expWeight <- expWeight %>%
+  select(-DailyCaloriesConsumed)
 
 
-vif_model <- lm(weightChangePerWeek ~ ., data = cleanWeight)
+vif_model <- lm(expWeightCPW ~ ., data = expWeight)
+
+# Calculate VIF
+vif_values <- vif(vif_model)
+
+# Print VIF values
+print(vif_values)
+```
+
+```{r}
+expWeight <- expWeight %>%
+  select(-BMRCalories)
+
+
+vif_model <- lm(expWeightCPW ~ ., data = expWeight)
+
+# Calculate VIF
+vif_values <- vif(vif_model)
+
+# Print VIF values
+print(vif_values)
+```
+
+```{r}
+expWeight <- expWeight %>%
+  select(-FinalWeightLbs)
+
+
+vif_model <- lm(expWeightCPW ~ ., data = expWeight)
 
 # Calculate VIF
 vif_values <- vif(vif_model)
@@ -152,13 +185,39 @@ print(vif_values)
 
 # Start Fiting
 
-## Simple linear model method Added based on lab 8
+```{r}
+regAll <- lm(expWeightCPW ~ .,  expWeight)
+summary(regAll)
+```
 
-This is one way ignored the quadratic, cubic, interaction...
+```{r}
+ggplot(expWeight, aes(x = as.factor(PhysicalActivityLevel), y = expWeightCPW, fill = as.factor(PhysicalActivityLevel))) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Weight Change Per Week by Physical Activity Level",
+       x = "Physical Activity Level",
+       y = "Weight Change Per Week") +
+  scale_fill_brewer(palette = "Blues") +
+  theme_minimal()
+```
+
+With boxplot we can see that the median difference between levels is not large. Lightly Active and Sedentary median close together, and Sedentary p value high as 0.9, combine with baseline.
+
+```{r}
+newCleanWeight <- expWeight
+
+newCleanWeight$PhysicalActivityLevel <- as.character(newCleanWeight$PhysicalActivityLevel) 
+newCleanWeight$PhysicalActivityLevel[newCleanWeight$PhysicalActivityLevel %in% c("Sedentary", "Lightly Active")] <- "low Activity"
+
+newCleanWeight$PhysicalActivityLevel <- as.factor(newCleanWeight$PhysicalActivityLevel)
+
+regAll <- lm(expWeightCPW ~ .,  newCleanWeight)
+summary(regAll)
+```
 
 ```{r}
 
-s = regsubsets(weightChangePerWeek~., data=cleanWeight, method="exhaustive")
+s = regsubsets(expWeightCPW~., data=newCleanWeight, method="exhaustive")
+
 ss <- summary(s)
 ss
 ```
@@ -181,7 +240,7 @@ num_predictors <- 1:length(ss$cp)
 cp_values <- ss$cp
 
 # Plot Cp 
-plot(num_predictors, cp_values, type = "b", pch = 19,
+plot(num_predictors[-1], cp_values[-1], type = "b", pch = 19,
      main = "Mallows' Cp vs Number of Predictors",
      xlab = "Number of Predictors", ylab = "Cp")
 
@@ -190,72 +249,77 @@ abline(a = 1, b = 1, col = "royalblue", lty = 2, lwd = 2)
 text(num_predictors, cp_values, labels = round(cp_values, 2), pos = 3, cex = 0.8, col = "black")
 
 ```
+
+# Choose model ///above is correct
+
+```{r}
+reg <- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel,  expWeight)
+summary(reg)
+```
+
+```{r}
+ggplot(reg, aes(x = reg$fitted.values, y = reg$residuals)) +
+  geom_point() +
+  labs(title = "Residuals vs. Fitted value",
+       x = "Fitted Value", y = "Residuals") +
+  theme_minimal()
+
+```
+
+### 6. **Check for Interaction Terms**
+
+-   Consider adding interaction terms (`x1 * x2`) if theory or plots suggest interactions.
+
+-   Test interaction significance using p-values.
+
+### 7. **Check for Polynomial or Quadratic Terms**
+
+-   If scatterplots or residuals suggest curvature, consider adding quadratic terms (`x^2`).
+
+-   Fit models with polynomial terms and compare using AIC, BIC, or adjusted R2R^2R2.
+
+### 8. **Model Diagnostics and Final Assessment**
+
+-   **Residual Analysis**: Ensure residuals are normally distributed, have constant variance, and are independent.
+
+-   **Outliers and Influential Points**: Check Cook’s distance or leverage points.
+
+-   **Compare Models**: Use cross-validation or validation datasets.
+
 We look at the scatterplots to see if there might be an interaction between the variables.
 
 ```{r}
-ggplot(cleanWeight, aes(x = SleepQuality, y = weightChangePerWeek, color = as.factor(PhysicalActivityLevel))) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "PhysicalActivityLevel and SleepQuality",
-       x = "Sleep Quality",
-       y = "Weight Change Per Week")
-```
-```{r}
-ggplot(cleanWeight, aes(x = StressLevel, y = weightChangePerWeek, color = as.factor(PhysicalActivityLevel))) +
+ggplot(newCleanWeight, aes(x = StressLevel, y = weightChangePerWeek, color = as.factor(PhysicalActivityLevel))) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "PhysicalActivityLevel and SleepQuality",
        x = "Stress Level",
        y = "Weight Change Per Week")
 ```
+
+```{r, message=FALSE}
+ggplot(newCleanWeight, aes(x = SleepQuality, y = weightChangePerWeek, color = as.factor(PhysicalActivityLevel))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "PhysicalActivityLevel and SleepQuality",
+       x = "Sleep Quality",
+       y = "Weight Change Per Week")
+```
+
 The slope of the fitted line does not change significantly, and we can test the significance of the interaction term to determine whether to include interaction.
 
 ```{r}
-regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel * StressLevel + SleepQuality ,  cleanWeight)
+regLab <- lm(exp(weightChangePerWeek) ~ PhysicalActivityLevel * StressLevel + SleepQuality ,  newCleanWeight)
 summary(regLab)
 ```
+
 ```{r}
-regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel * SleepQuality +  StressLevel,  cleanWeight)
+regLab <- lm(exp(weightChangePerWeek) ~ PhysicalActivityLevel * SleepQuality +  StressLevel,  newCleanWeight)
 summary(regLab)
 ```
+
 All of the interaction terms are not significant, so we don't include the interaction.
 
-```{r}
-regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel + SleepQuality +  StressLevel,  cleanWeight)
-summary(regLab)
-```
-The model shows that the variable Physical Activity Level is statistically insignificant, and we look at the various in weight Change PerWeek for Physical Activity Level via boxplot.
-
-```{r}
-ggplot(cleanWeight, aes(x = as.factor(PhysicalActivityLevel), y = weightChangePerWeek, fill = as.factor(PhysicalActivityLevel))) +
-  geom_boxplot() +
-  labs(title = "Boxplot of Weight Change Per Week by Physical Activity Level",
-       x = "Physical Activity Level",
-       y = "Weight Change Per Week") +
-  scale_fill_brewer(palette = "Blues") +
-  theme_minimal()
-```
-With boxplot we can see that the median difference between levels is not large, which may be the reason why Physical Activity Level is not statistically significant.
-
-```{r}
-ggplot(regLab, aes(x = regLab$fitted.values, y = regLab$residuals)) +
-  geom_point() +
-  labs(title = "Residuals vs. Fitted value",
-       x = "Fitted Value", y = "Residuals") +
-  theme_minimal()
-
-```
-```{r}
-regLab_log <- lm(log(weightChangePerWeek + 3) ~ PhysicalActivityLevel + SleepQuality +  StressLevel,  cleanWeight)
-summary(regLab_log)
-```
-```{r}
-ggplot(regLab_log, aes(x = regLab_log$fitted.values, y = regLab_log$residuals)) +
-  geom_point() +
-  labs(title = "Residuals vs. Fitted value",
-       x = "Fitted Value", y = "Residuals") +
-  theme_minimal()
-```
 ```{r}
 ggplot(data = cleanWeight, aes(x = SleepQuality, y = weightChangePerWeek)) +
   geom_point() +
@@ -265,130 +329,8 @@ ggplot(data = cleanWeight, aes(x = StressLevel, y = weightChangePerWeek)) +
   geom_point() +
   labs(title = "Linear vs Quadratic Fit", x = "Stress Level", y = "weight Change Per Week")
 ```
+
 The scatterplot shows that Sleep Quality, Stress Level and weight Change Per Week do not have an obvious quadratic shape, so we still choose the linear model.
-
-```{r}
-n <- nrow(cleanWeight)
-squared_errors <- numeric(n)
-for (i in 1:n) {
-  train_data <- cleanWeight[-i, ]
-  test_data <- cleanWeight[i, , drop = FALSE]
-  
-  predicted <- predict(regLab, newdata = test_data)
-  
-  squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
-}
-
-loocv_mse <- mean(squared_errors)
-cat("LOOCV Mean Squared Error:", loocv_mse, "\n")
-```
-
-# Not So sure, start now
-
-## Start fitting, and eliminate variables
-
-How should I deal with interaction, cubic things
-
-### Figure out interaction based on plot and test
-
-This is second way, test-based, eliminate according to p-value
-
-```{r}
-predictors <- c("DailyCaloriesConsumed", "BMRCalories","PhysicalActivityLevel", "Age","SleepQuality", "StressLevel")
-
-# Plot each predictor
-for (var in predictors) {
-  print(
-    ggplot(cleanWeight, aes_string(x = var, y = "weightChangePerWeek", color = "Gender")) +
-      geom_point(alpha = 0.6) +
-      labs(title = paste("Interaction:", var, "vs Weight Change by Gender"),
-           x = var, y = "Weight Change per Week") +
-      theme_minimal()
-  )
-}
-#It seems BMRCalories will have different trend relative to gender
-```
-
-```{r}
-regWithInteraction <- lm(weightChangePerWeek ~ Age + Gender * BMRCalories + DailyCaloriesConsumed + PhysicalActivityLevel + StressLevel + SleepQuality,  cleanWeight)
-regWithoutInteraction <- lm(weightChangePerWeek ~ . , cleanWeight)
-
-```
-
-```{r}
-summary(regWithoutInteraction)
-#according to the p value the interaction is useless
-```
-
-
-```{r}
-summary(regWithInteraction)
-```
-
-
-## Finish for interaction, start dealing which variable should left
-
-based on p-value
-
-```{r}
-reg1 <- lm(weightChangePerWeek ~ Age + Gender + BMRCalories + DailyCaloriesConsumed + StressLevel + SleepQuality, cleanWeight)
-summary(reg1)
-```
-
-```{r}
-reg2 <- lm(weightChangePerWeek ~ Gender + BMRCalories + DailyCaloriesConsumed + StressLevel + SleepQuality, cleanWeight)
-summary(reg2)
-```
-
-```{r}
-
-reg3 <- lm(weightChangePerWeek ~  Gender + DailyCaloriesConsumed + StressLevel + SleepQuality , cleanWeight)
-summary(reg3)
-```
-
-```{r}
-RSS_model <- sum(resid(reg2)^2)         
-sigma2 <- summary(reg2)$sigma^2      
-p <- length(coef(reg2))                
-n <- nrow(cleanWeight)        
-
-Cp <- (RSS_model / sigma2) + 2 * p - n
-#valid CP 5+1
-
-par(mfrow = c(2, 2)) 
-plot(reg2)
-```
-
-```{r}
-
-RSS_model <- sum(resid(reg3)^2)         
-sigma2 <- summary(reg3)$sigma^2      
-p <- length(coef(reg3))                
-n <- nrow(cleanWeight)        
-
-Cp <- (RSS_model / sigma2) + 2 * p - n
-#Valid CP 4+1
-
-par(mfrow = c(2, 2)) 
-plot(reg3)
-```
-
-### Previous residual plot seems shows some pattern, Start thinking about other model fit, such cubic, quadratic
-
-```{r}
-
-meanDCC = mean(cleanWeight$DailyCaloriesConsumed)
-reg_cubic <- lm(weightChangePerWeek ~ Gender + 
-                 I((meanDCC-DailyCaloriesConsumed)^3) + SleepQuality + StressLevel,  data = cleanWeight)
-
-summary(reg_cubic)
-```
-
-```{r}
-
-par(mfrow = c(2, 2)) 
-plot(reg_cubic)
-```
 
 ## Validation
 
@@ -399,8 +341,7 @@ squared_errors <- numeric(n)
 for (i in 1:n) {
   train_data <- cleanWeight[-i, ]
   test_data <- cleanWeight[i, , drop = FALSE]
-  loocv_model <- lm(weightChangePerWeek ~ Gender + I((meanDCC - DailyCaloriesConsumed)^3) + SleepQuality + StressLevel, data = train_data)
-  predicted <- predict(loocv_model, newdata = test_data)
+  predicted <- predict(regLab, newdata = test_data)
   squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
 }
 
