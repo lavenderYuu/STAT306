@@ -207,6 +207,7 @@ newCleanWeight <- expWeight
 
 newCleanWeight$PhysicalActivityLevel <- as.character(newCleanWeight$PhysicalActivityLevel) 
 newCleanWeight$PhysicalActivityLevel[newCleanWeight$PhysicalActivityLevel %in% c("Sedentary", "Lightly Active")] <- "low Activity"
+newCleanWeight$PhysicalActivityLevel[newCleanWeight$PhysicalActivityLevel %in% c("Moderately Active", "Very Active")] <- "high Activity"
 
 newCleanWeight$PhysicalActivityLevel <- as.factor(newCleanWeight$PhysicalActivityLevel)
 
@@ -219,7 +220,7 @@ summary(regAll)
 s = regsubsets(expWeightCPW~., data=newCleanWeight, method="exhaustive")
 
 ss <- summary(s)
-ss
+ss$outmat
 ```
 
 ```{r}
@@ -240,7 +241,7 @@ num_predictors <- 1:length(ss$cp)
 cp_values <- ss$cp
 
 # Plot Cp 
-plot(num_predictors[-1], cp_values[-1], type = "b", pch = 19,
+plot(num_predictors, cp_values, type = "b", pch = 19,
      main = "Mallows' Cp vs Number of Predictors",
      xlab = "Number of Predictors", ylab = "Cp")
 
@@ -250,7 +251,7 @@ text(num_predictors, cp_values, labels = round(cp_values, 2), pos = 3, cex = 0.8
 
 ```
 
-# Choose model ///above is correct
+# Choose model 
 
 ```{r}
 reg <- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel,  expWeight)
@@ -276,7 +277,7 @@ ggplot(reg, aes(x = reg$fitted.values, y = reg$residuals)) +
 
 -   If scatterplots or residuals suggest curvature, consider adding quadratic terms (`x^2`).
 
--   Fit models with polynomial terms and compare using AIC, BIC, or adjusted R2R^2R2.
+-   Fit models with polynomial terms and compare using AIC, BIC, or adjusted R2R\^2R2.
 
 ### 8. **Model Diagnostics and Final Assessment**
 
