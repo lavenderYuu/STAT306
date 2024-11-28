@@ -5,6 +5,10 @@ date: "2024-11-24"
 ---
 
 ```{r setup, include=FALSE}
+```
+
+
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -27,7 +31,7 @@ head(weightData)
 
 ```{r}
 
-#we treate sleep quality, physical activity level and stress level treat as continuous variables since the levels have a meaningful progression or rank (e.g., increasing physical effort or impact on health).
+#we treate sleep quality and stress level treat as continuous variables since the levels have a meaningful progression or rank (e.g., increasing physical effort or impact on health).
 
 cleanWeight <- weightData %>%
   mutate(
@@ -36,11 +40,6 @@ cleanWeight <- weightData %>%
       Sleep.Quality == "Good" ~ 3,
       Sleep.Quality == "Fair" ~ 2,
       Sleep.Quality == "Poor" ~ 1
-    ),Physical.Activity.Level = case_when(
-      Physical.Activity.Level == "Sedentary" ~ 1,
-      Physical.Activity.Level == "Lightly Active" ~ 2,
-      Physical.Activity.Level == "Moderately Active" ~ 3,
-      Physical.Activity.Level == "Very Active" ~ 4
     )
   )
 
@@ -191,11 +190,52 @@ abline(a = 1, b = 1, col = "royalblue", lty = 2, lwd = 2)
 text(num_predictors, cp_values, labels = round(cp_values, 2), pos = 3, cex = 0.8, col = "black")
 
 ```
+We look at the scatterplots to see if there might be an interaction between the variables.
 
 ```{r}
-regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel + StressLevel + SleepQuality,  cleanWeight)
+ggplot(cleanWeight, aes(x = SleepQuality, y = weightChangePerWeek, color = as.factor(PhysicalActivityLevel))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "PhysicalActivityLevel and SleepQuality",
+       x = "Sleep Quality",
+       y = "Weight Change Per Week")
+```
+```{r}
+ggplot(cleanWeight, aes(x = StressLevel, y = weightChangePerWeek, color = as.factor(PhysicalActivityLevel))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "PhysicalActivityLevel and SleepQuality",
+       x = "Stress Level",
+       y = "Weight Change Per Week")
+```
+The slope of the fitted line does not change significantly, and we can test the significance of the interaction term to determine whether to include interaction.
+
+```{r}
+regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel * StressLevel + SleepQuality ,  cleanWeight)
 summary(regLab)
 ```
+```{r}
+regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel * SleepQuality +  StressLevel,  cleanWeight)
+summary(regLab)
+```
+All of the interaction terms are not significant, so we don't include the interaction.
+
+```{r}
+regLab <- lm(weightChangePerWeek ~ PhysicalActivityLevel + SleepQuality +  StressLevel,  cleanWeight)
+summary(regLab)
+```
+The model shows that the variable Physical Activity Level is statistically insignificant, and we look at the various in weight Change PerWeek for Physical Activity Level via boxplot.
+
+```{r}
+ggplot(cleanWeight, aes(x = as.factor(PhysicalActivityLevel), y = weightChangePerWeek, fill = as.factor(PhysicalActivityLevel))) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Weight Change Per Week by Physical Activity Level",
+       x = "Physical Activity Level",
+       y = "Weight Change Per Week") +
+  scale_fill_brewer(palette = "Blues") +
+  theme_minimal()
+```
+With boxplot we can see that the median difference between levels is not large, which may be the reason why Physical Activity Level is not statistically significant.
 
 ```{r}
 ggplot(regLab, aes(x = regLab$fitted.values, y = regLab$residuals)) +
@@ -205,11 +245,31 @@ ggplot(regLab, aes(x = regLab$fitted.values, y = regLab$residuals)) +
   theme_minimal()
 
 ```
+```{r}
+regLab_log <- lm(log(weightChangePerWeek + 3) ~ PhysicalActivityLevel + SleepQuality +  StressLevel,  cleanWeight)
+summary(regLab_log)
+```
+```{r}
+ggplot(regLab_log, aes(x = regLab_log$fitted.values, y = regLab_log$residuals)) +
+  geom_point() +
+  labs(title = "Residuals vs. Fitted value",
+       x = "Fitted Value", y = "Residuals") +
+  theme_minimal()
+```
+```{r}
+ggplot(data = cleanWeight, aes(x = SleepQuality, y = weightChangePerWeek)) +
+  geom_point() +
+  labs(title = "Linear vs Quadratic Fit", x = "Sleep Quality", y = "weight Change Per Week")
+
+ggplot(data = cleanWeight, aes(x = StressLevel, y = weightChangePerWeek)) +
+  geom_point() +
+  labs(title = "Linear vs Quadratic Fit", x = "Stress Level", y = "weight Change Per Week")
+```
+The scatterplot shows that Sleep Quality, Stress Level and weight Change Per Week do not have an obvious quadratic shape, so we still choose the linear model.
 
 ```{r}
-
+n <- nrow(cleanWeight)
 squared_errors <- numeric(n)
-
 for (i in 1:n) {
   train_data <- cleanWeight[-i, ]
   test_data <- cleanWeight[i, , drop = FALSE]
@@ -260,10 +320,11 @@ summary(regWithoutInteraction)
 #according to the p value the interaction is useless
 ```
 
-```{r}
 
+```{r}
 summary(regWithInteraction)
 ```
+
 
 ## Finish for interaction, start dealing which variable should left
 
