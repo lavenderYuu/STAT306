@@ -217,49 +217,71 @@ summary(regAll)
 
 ```{r}
 
-s = regsubsets(expWeightCPW~., data=newCleanWeight, method="exhaustive")
-
-ss <- summary(s)
-ss$outmat
+# s = regsubsets(expWeightCPW~., data=newCleanWeight, method="exhaustive")
+# 
+# ss <- summary(s)
+# ss$outmat
 ```
 
 ```{r}
-num_predictors <- rownames(ss$which)
-
-
-plot(num_predictors, ss$rsq, type = "b", pch = 19,
-     main = "R^2 vs Number of Predictors",
-     xlab = "Number of Predictors", ylab = "R^2")
-
-# Plot Adjusted R^2
-plot(num_predictors, ss$adjr2, type = "b", pch = 19,
-     main = "Adjusted R^2 vs Number of Predictors",
-     xlab = "Number of Predictors", ylab = "Adjusted R^2")
-
-
-num_predictors <- 1:length(ss$cp) 
-cp_values <- ss$cp
-
-# Plot Cp 
-plot(num_predictors, cp_values, type = "b", pch = 19,
-     main = "Mallows' Cp vs Number of Predictors",
-     xlab = "Number of Predictors", ylab = "Cp")
-
-abline(a = 1, b = 1, col = "royalblue", lty = 2, lwd = 2)
-
-text(num_predictors, cp_values, labels = round(cp_values, 2), pos = 3, cex = 0.8, col = "black")
+# num_predictors <- rownames(ss$which)
+# 
+# 
+# plot(num_predictors, ss$rsq, type = "b", pch = 19,
+#      main = "R^2 vs Number of Predictors",
+#      xlab = "Number of Predictors", ylab = "R^2")
+# 
+# # Plot Adjusted R^2
+# plot(num_predictors, ss$adjr2, type = "b", pch = 19,
+#      main = "Adjusted R^2 vs Number of Predictors",
+#      xlab = "Number of Predictors", ylab = "Adjusted R^2")
+# 
+# 
+# num_predictors <- 1:length(ss$cp) 
+# cp_values <- ss$cp
+# 
+# # Plot Cp 
+# plot(num_predictors, cp_values, type = "b", pch = 19,
+#      main = "Mallows' Cp vs Number of Predictors",
+#      xlab = "Number of Predictors", ylab = "Cp")
+# 
+# abline(a = 1, b = 1, col = "royalblue", lty = 2, lwd = 2)
+# 
+# text(num_predictors, cp_values, labels = round(cp_values, 2), pos = 3, cex = 0.8, col = "black")
 
 ```
 
-# Choose model 
+# Choose model
+
+test based, eliminate variable through p value
 
 ```{r}
-reg <- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel,  expWeight)
-summary(reg)
+regfull <- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel + Age + Gender + CurrentWeightLbs + PhysicalActivityLevel,  newCleanWeight)
+summary(regfull)
 ```
 
 ```{r}
-ggplot(reg, aes(x = reg$fitted.values, y = reg$residuals)) +
+reg6 <- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel + Age + Gender + CurrentWeightLbs,  newCleanWeight)
+summary(reg6)
+```
+
+```{r}
+reg5<- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel + Age + Gender,  newCleanWeight)
+summary(reg5)
+```
+
+```{r}
+reg4<- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel + Gender,  newCleanWeight)
+summary(reg4)
+```
+
+```{r}
+reg3<- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel,  newCleanWeight)
+summary(reg3)
+```
+
+```{r}
+ggplot(reg3, aes(x = reg$fitted.values, y = reg$residuals)) +
   geom_point() +
   labs(title = "Residuals vs. Fitted value",
        x = "Fitted Value", y = "Residuals") +
@@ -335,15 +357,18 @@ The scatterplot shows that Sleep Quality, Stress Level and weight Change Per Wee
 
 ## Validation
 
+cross validation, r squre, adjust r square, mallow cp...
+
 ```{r}
+n = nrow(cleanWeight)
 squared_errors <- numeric(n)
 
 # Perform LOOCV
 for (i in 1:n) {
   train_data <- cleanWeight[-i, ]
   test_data <- cleanWeight[i, , drop = FALSE]
-  predicted <- predict(regLab, newdata = test_data)
-  squared_errors[i] <- (test_data$weightChangePerWeek - predicted)^2
+  predicted <- predict(reg4, newdata = test_data)
+  squared_errors[i] <- (test_data$weightChangePerWeek - log(predicted))^2
 }
 
 loocv_mse <- mean(squared_errors)
