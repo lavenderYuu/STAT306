@@ -4,13 +4,6 @@ output: html_document
 date: "2024-11-24"
 ---
 
-```{r setup, include=FALSE}
-```
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ```{r}
 library(leaps)
 library(dplyr)
@@ -191,6 +184,14 @@ summary(regAll)
 ```
 
 ```{r}
+regAll %>%
+  ggplot(aes(x = regAll$fitted.values , y = regAll$residuals)) +
+  geom_point() +
+   labs(title = "Residuals vs. Fitted value",
+       x = "fitted values", y = "residuals")
+```
+
+```{r}
 ggplot(expWeight, aes(x = as.factor(PhysicalActivityLevel), y = expWeightCPW, fill = as.factor(PhysicalActivityLevel))) +
   geom_boxplot() +
   labs(title = "Boxplot of Weight Change Per Week by Physical Activity Level",
@@ -261,8 +262,25 @@ summary(regfull)
 ```
 
 ```{r}
+
+regfull %>%
+  ggplot(aes(x = regfull$fitted.values , y = regfull$residuals)) +
+  geom_point() +
+   labs(title = "Residuals vs. Fitted value",
+       x = "fitted values", y = "residuals")
+```
+
+```{r}
 reg6 <- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel + Age + Gender + CurrentWeightLbs,  newCleanWeight)
 summary(reg6)
+```
+
+```{r}
+reg6 %>%
+  ggplot(aes(x = reg6$fitted.values , y = reg6$residuals)) +
+  geom_point() +
+   labs(title = "Residuals vs. Fitted value",
+       x = "fitted values", y = "residuals")
 ```
 
 ```{r}
@@ -271,8 +289,24 @@ summary(reg5)
 ```
 
 ```{r}
+reg5 %>%
+  ggplot(aes(x = reg5$fitted.values , y = reg5$residuals)) +
+  geom_point() +
+   labs(title = "Residuals vs. Fitted value",
+       x = "fitted values", y = "residuals")
+```
+
+```{r}
 reg4<- lm(expWeightCPW ~ DailyCaloricSurplusDeficit + SleepQuality +  StressLevel + Gender,  newCleanWeight)
 summary(reg4)
+```
+
+```{r}
+reg4 %>%
+  ggplot(aes(x = reg6$fitted.values , y = reg4$residuals)) +
+  geom_point() +
+   labs(title = "Residuals vs. Fitted value",
+       x = "fitted values", y = "residuals")
 ```
 
 ```{r}
