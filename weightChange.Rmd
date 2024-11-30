@@ -347,7 +347,7 @@ ggplot(reg3, aes(x = reg3$fitted.values, y = reg3$residuals)) +
 We look at the scatterplots to see if there might be an interaction between the variables.
 
 ```{r}
-ggplot(newCleanWeight, aes(x = StressLevel, y = expWeightCPW, color = as.factor(PhysicalActivityLevel))) +
+ggplot(newCleanWeight, aes(x = DailyCaloricSurplusDeficit, y = expWeightCPW, color = as.factor(SleepQuality))) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "PhysicalActivityLevel and SleepQuality",
@@ -356,7 +356,7 @@ ggplot(newCleanWeight, aes(x = StressLevel, y = expWeightCPW, color = as.factor(
 ```
 
 ```{r, message=FALSE}
-ggplot(newCleanWeight, aes(x = SleepQuality, y = expWeightCPW, color = as.factor(PhysicalActivityLevel))) +
+ggplot(newCleanWeight, aes(x = DailyCaloricSurplusDeficit, y = expWeightCPW, color = as.factor(StressLevel))) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "PhysicalActivityLevel and SleepQuality",
@@ -367,12 +367,12 @@ ggplot(newCleanWeight, aes(x = SleepQuality, y = expWeightCPW, color = as.factor
 The slope of the fitted line does not change significantly, and we can test the significance of the interaction term to determine whether to include interaction.
 
 ```{r}
-regLab <- lm(exp(expWeightCPW) ~ PhysicalActivityLevel * StressLevel + SleepQuality ,  newCleanWeight)
+regLab <- lm(exp(expWeightCPW) ~ DailyCaloricSurplusDeficit * SleepQuality + StressLevel,  newCleanWeight)
 summary(regLab)
 ```
 
 ```{r}
-regLab <- lm(exp(expWeightCPW) ~ PhysicalActivityLevel * SleepQuality +  StressLevel,  newCleanWeight)
+regLab <- lm(exp(expWeightCPW) ~ DailyCaloricSurplusDeficit * StressLevel +  SleepQuality,  newCleanWeight)
 summary(regLab)
 ```
 
@@ -402,7 +402,7 @@ squared_errors <- numeric(n)
 for (i in 1:n) {
   train_data <- cleanWeight[-i, ]
   test_data <- cleanWeight[i, , drop = FALSE]
-  predicted <- predict(reg4, newdata = test_data)
+  predicted <- predict(reg3, newdata = test_data)
   squared_errors[i] <- (test_data$weightChangePerWeek - log(predicted))^2
 }
 
