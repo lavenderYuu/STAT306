@@ -8,22 +8,74 @@ date: "2024-12-02"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Background
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Health is always a topic of concern, with weight serving as an important indicator of overall well-being. Weight is influenced by a multitude of factors, making it challenging to fully understand the precise contributions of each. This project aims to explore possible factors in detail and identify the key determinants of an individual's weight. In this project, we developed a predictive model forecasting weight changes over a specified period based on various influencing variables. By examining these factors, the model seeks to provide insightful information that could help both individuals to better understand weight dynamics and create personalized weight management strategies based on their personal needs.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Source of Data 
 
-```{r cars}
-summary(cars)
-```
+The data for this project comes from the Comprehensive Weight Change Prediction dataset on Kaggle, created by Abdullah. It includes data from 100 participants, with a focus on demographics, dietary habits, physical activity, and lifestyle factors, all aimed at predicting weight change over time. Key features of the dataset include age, gender, current weight, daily caloric intake, macronutrient breakdown, sleep quality, and stress levels. The categorical variables are gender and physical activity level, while the continuous variables include age, current weight, BMR, daily calorie surplus/deficit, weight change, and duration.
 
-## Including Plots
+Data: <https://www.kaggle.com/datasets/abdullah0a/comprehensive-weight-change-prediction>
 
-You can also embed plots, for example:
+## Description of Data
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+![](images/Screenshot 2024-12-02 at 8.32.27 AM.png)
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## **Data Cleaning**
+
+The data was cleaned to prepare it for further exploration. The SleepQuality variable, which initially had categorical levels like "Excellent", "Good", "Fair", and "Poor", was transformed into a numeric scale (ranging from 4 to 1) to reflect its ordinal nature. This transformation facilitates more meaningful analysis of how sleep quality influences weight change.
+
+Column names were updated for clarity and consistency, making the data more intuitive to work with. For instance, Sleep.Quality was renamed to SleepQuality, and WeightChangeLbs was retained as WeightChangeLbs (note: it was already appropriately named).
+
+The Gender variable, initially a character string, was converted into a factor with two levels, "M" (Male) and "F" (Female), ensuring proper handling in statistical models.
+
+A new variable, weightChangePerWeek, was created to provide a normalized measure of weight change by dividing the total weight change (WeightChangeLbs) by the duration of the study (DurationWeeks). This metric offers a clearer view of the rate of weight change over time.
+
+The final cleaned dataset now includes a comprehensive set of variables: Age, Gender, BMRCalories, DailyCaloriesConsumed, PhysicalActivityLevel, SleepQuality, StressLevel, and the newly derived weightChangePerWeek. This enriched dataset enables deeper exploration of how various factors—such as caloric intake, sleep quality, and physical activity—interact to influence weight change.
+
+![](images/Screenshot 2024-12-02 at 8.35.58 AM.png)
+
+![](images/Screenshot 2024-12-02 at 8.36.19 AM.png)
+
+## Transformation
+
+To assess whether a transformation was needed for the model, we initially fit a linear regression model using weightChangePerWeek as the response variable and all other factors as predictors. The residuals from this model were plotted against the fitted values to check for any obvious patterns or trends that might indicate issues with the assumptions of linear regression.
+
+The plot revealed a left-skewed pattern in the residuals, suggesting that normality assumption of the model cannot be assumed. This indicated the need for a transformation.
+
+![](images/Screenshot 2024-12-02 at 8.37.05 AM.png)
+
+![](images/Screenshot 2024-12-02 at 8.37.23 AM.png)
+
+Therefore, we applied a logarithmic transformation to the weightChangePerWeek variable. After refitting the model using the transformed variable, the residual plot showed a more random scatter around zero, suggesting that the transformation had improved the fit and addressed the skewness in the data.
+
+Finally, the transformed variable was added to the dataset as expWeightCPW, replacing the original weightChangePerWeek. This transformed dataset is now better prepared for further analysis.
+
+![](images/Screenshot 2024-12-02 at 8.38.28 AM.png)
+
+## **Multicollinearity**
+
+To check for multicollinearity in the dataset, we first focused on the numeric variables by calculating the correlation matrix. This allowed us to examine how strongly the variables are correlated with each other.
+
+We visualized the correlation matrix using a heatmap, where stronger correlations were highlighted in red, and weaker correlations were shown in blue. This helped identify any highly correlated pairs of variables that might cause multicollinearity in regression models.
+
+![](images/Screenshot 2024-12-02 at 8.39.00 AM.png)
+
+Next, we assessed multicollinearity by calculating the Variance Inflation Factor (VIF) for the regression model. High VIF values indicate that a predictor variable is highly correlated with other predictors, which can lead to unreliable estimates in the model.
+
+### **VIF Interpretation:**
+
+-   **VIF \< 5**: Low multicollinearity, no further action required.
+
+-   **VIF 5–10**: Moderate multicollinearity (consider investigating further).
+
+-   **VIF \> 10**: High multicollinearity (may require remedial measures, such as removing variables or PCA).
+
+![](images/Screenshot 2024-12-02 at 8.39.13 AM.png)
+
+To reduce multicollinearity, we sequentially removed variables with high VIF values from the model. After each removal, we recalculated the VIF to check for improvement. Specifically, we removed the following variables:BMRCalories, DailyCaloriesConsumed, and FinalWeightLbs.
+
+![](images/Screenshot 2024-12-02 at 8.40.15 AM.png)
+
+With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
