@@ -1,6 +1,8 @@
 ---
 title: "WeightChange"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2024-11-24"
 ---
 
@@ -214,7 +216,6 @@ newCleanWeight$PhysicalActivityLevel <- as.factor(newCleanWeight$PhysicalActivit
 
 regAll <- lm(expWeightCPW ~ .,  newCleanWeight)
 summary(regAll)
-newCleanWeight
 ```
 
 # Choose model
@@ -294,20 +295,6 @@ ggplot(reg3, aes(x = reg3$fitted.values, y = reg3$residuals)) +
 
 -   Test interaction significance using p-values.
 
-### **Check for Polynomial or Quadratic Terms**
-
--   If scatterplots or residuals suggest curvature, consider adding quadratic terms (`x^2`).
-
-### **Model Diagnostics and Final Assessment**
-
--   **Residual Analysis**: Ensure residuals are normally distributed, have constant variance, and are independent.
-
--   **Outliers and Influential Points**: Check Cook’s distance or leverage points.
-
--   **Compare Models**: Use cross-validation or validation datasets.
-
-We look at the scatterplots to see if there might be an interaction between the variables.
-
 ```{r}
 ggplot(newCleanWeight, aes(x = DailyCaloricSurplusDeficit, y = expWeightCPW, color = as.factor(SleepQuality))) +
   geom_point() +
@@ -340,6 +327,10 @@ summary(regLab)
 
 All of the interaction terms are not significant, so we don't include the interaction.
 
+### **Check for Polynomial or Quadratic Terms**
+
+-   If scatterplots or residuals suggest curvature, consider adding quadratic terms (`x^2`).
+
 ```{r}
 ggplot(data = cleanWeight, aes(x = SleepQuality, y = weightChangePerWeek)) +
   geom_point() +
@@ -350,9 +341,15 @@ ggplot(data = cleanWeight, aes(x = StressLevel, y = weightChangePerWeek)) +
   labs(title = "Linear vs Quadratic Fit", x = "Stress Level", y = "weight Change Per Week")
 ```
 
-The scatterplot shows that Sleep Quality, Stress Level and weight Change Per Week do not have an obvious quadratic shape, so we still choose the linear model.
+The scatter plot shows that Sleep Quality, Stress Level and weight Change Per Week do not have an obvious quadratic shape, so we still choose the linear model.
 
-## Validation
+### **Model Diagnostics and Final Assessment**
+
+-   **Residual Analysis**: Ensure residuals are normally distributed, have constant variance, and are independent.
+
+-   **Outliers and Influential Points**: Check Cook’s distance or leverage points.
+
+-   **Compare Models**: Use cross-validation or validation datasets.
 
 cross validation, r squre, adjust r square, mallow cp...
 
