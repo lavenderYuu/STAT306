@@ -77,3 +77,31 @@ To reduce multicollinearity, we sequentially removed variables with high VIF val
 ![](Screenshot%202024-12-03%20at%209.10.13%20AM.png)
 
 With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
+
+
+#### **Visualizations and Key Features**
+
+-   **Histogram of Weight Change Per Week**: The initial histogram displayed a left-skewed distribution, highlighting the need for a transformation to normalize the data.
+
+-   **Residuals vs. Fitted Values Plot**: This plot showed a clear pattern before transformation, indicating that the linear model assumptions were violated.
+
+-   **Correlation Heatmap**: A heatmap revealed strong correlations among several predictors, suggesting potential multicollinearity. The heatmap helped identify which variables to remove in subsequent models.
+
+#### **Statistical Methodology**
+
+We applied multiple linear regression to investigate how variables like age, stress level, and sleep quality affect weight change per week. To ensure valid inferences:
+
+1.  **Transformation**: A logarithmic transformation was applied to the response variable (`weightChangePerWeek`) to address the skewness and improve model fit.
+
+2.  **Multicollinearity Check**: Variance Inflation Factor (VIF) analysis led to the removal of highly collinear variables such as `BMRCalories` and `DailyCaloriesConsumed`.
+
+3.  **Model Selection**: Through stepwise elimination based on p-values, we refined the model to include significant predictors only.
+
+4.  **Regression Diagnostics**: Residual plots after transformation indicated that the model assumptions were satisfied, with no discernible patterns in the residuals.
+
+------------------------------------------------------------------------
+
+### **Conclusion**
+
+Our analysis identified key determinants of weight change, such as caloric surplus, stress level, and sleep quality. The final model confirmed that higher caloric surplus significantly increases weight gain, while better sleep quality correlates with more controlled weight changes. Stress level had a moderate impact, suggesting the need for further exploration.\
+The initial research question was addressed effectively, demonstrating that behavioral factors significantly influence weight change. However, limitations such as the small sample size (n = 100) and the lack of temporal data collection details should be noted. Future studies could benefit from a larger, more diverse dataset and additional variables like metabolic rate fluctuations.
