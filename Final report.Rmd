@@ -79,7 +79,7 @@ To reduce multicollinearity, we sequentially removed variables with high VIF val
 With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
 
 
-#### **Visualizations and Key Features**
+### **Visualizations and Key Features**
 
 -   **Histogram of Weight Change Per Week**: The initial histogram displayed a left-skewed distribution, highlighting the need for a transformation to normalize the data.
 
@@ -87,7 +87,7 @@ With low multicollinearity remaining in the dataset, we can now proceed with mor
 
 -   **Correlation Heatmap**: A heatmap revealed strong correlations among several predictors, suggesting potential multicollinearity. The heatmap helped identify which variables to remove in subsequent models.
 
-#### **Statistical Methodology**
+### **Statistical Methodology**
 
 We applied multiple linear regression to investigate how variables like age, stress level, and sleep quality affect weight change per week. To ensure valid inferences:
 
