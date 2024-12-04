@@ -101,7 +101,7 @@ We applied multiple linear regression to investigate how variables like age, str
 
 ------------------------------------------------------------------------
 
-### **Conclusion**
+## **Conclusion**
 
 Our analysis identified key determinants of weight change, such as caloric surplus, stress level, and sleep quality. The final model confirmed that higher caloric surplus significantly increases weight gain, while better sleep quality correlates with more controlled weight changes. Stress level had a moderate impact, suggesting the need for further exploration.\
 The initial research question was addressed effectively, demonstrating that behavioral factors significantly influence weight change. However, limitations such as the small sample size (n = 100) and the lack of temporal data collection details should be noted. Future studies could benefit from a larger, more diverse dataset and additional variables like metabolic rate fluctuations.
