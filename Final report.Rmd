@@ -81,11 +81,45 @@ With low multicollinearity remaining in the dataset, we can now proceed with mor
 
 ### **Visualizations and Key Features**
 
--   **Histogram of Weight Change Per Week**: The initial histogram displayed a left-skewed distribution, highlighting the need for a transformation to normalize the data.
+-   **Histogram of Weight Change Per Week**
 
--   **Residuals vs. Fitted Values Plot**: This plot showed a clear pattern before transformation, indicating that the linear model assumptions were violated.
+    The initial histogram of `weightChangePerWeek` displayed a left-skewed distribution, emphasizing the need for transformation. This skewness indicated potential violations of the normality assumption critical for linear regression models.
 
--   **Correlation Heatmap**: A heatmap revealed strong correlations among several predictors, suggesting potential multicollinearity. The heatmap helped identify which variables to remove in subsequent models.
+    > ![](images/histogram.jpg)
+
+-   **Residuals vs. Fitted Values Plot(Before and After Transformation)**
+
+    Before transformation, the residuals vs. fitted values plot showed a distinct pattern, suggesting heteroscedasticity. Post-logarithmic transformation (`expWeightCPW`), the residuals appeared randomly scattered around zero, indicating improved adherence to the assumptions of linearity and homoscedasticity.
+
+    Before transformation:
+
+    ![](images/RvsF before t-01.jpg)
+
+    After transformation:
+
+    ![](images/RvsF after t.jpg)
+
+-   **Correlation Heatmapand Multicollinearity Check**
+
+    The correlation heatmap revealed strong correlations among predictors like `BMRCalories` and `DailyCaloriesConsumed`. VIF analysis confirmed high multicollinearity, necessitating the removal of these variables to enhance model reliability.
+
+    ![](images/Correlation Heatmap with Values.jpg)
+
+-   **Model Selection Using Stepwise Elimination**
+
+    Starting with the full model, predictors were removed based on p-values. Despite variable reduction, adjusted R-squared did not decrease significantly, confirming that the simpler model maintained predictive accuracy.
+
+    ![](images/fullmodel.jpg)
+
+-   **Interaction and Quadratic Terms**
+
+    Plots examining interactions and quadratic terms between variables (e.g., `DailyCaloricSurplusDeficit` and `StressLevel`) indicated no significant improvement in model fit. The slopes remained consistent, validating the decision to exclude these terms.
+
+    ![](images/WechatIMG516.jpg)
+
+-   **Mallow's Cp, Adjusted R-squared, and QQ Plot**
+
+    The Mallow\'s Cp analysis, coupled with the adjusted R-squared, indicated minimal loss in explanatory power when reducing predictors. Additionally, the QQ plot confirmed the normal distribution of residuals, validating the model\'s assumptions.
 
 ### **Statistical Methodology**
 
