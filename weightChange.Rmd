@@ -351,6 +351,26 @@ The scatter plot shows that Sleep Quality, Stress Level and weight Change Per We
 
 -   **Compare Models**: Use cross-validation or validation datasets.
 
+```{r}
+
+MS_full <- sum(residuals(regfull)^2) / (n - length(coef(regfull))) 
+k <- length(coef(reg3))
+rss_p = sum(residuals(reg3)^2)
+cp <- rss_p/MS_full -n+2*k
+
+paste0("Mallow Cp: ", cp)
+```
+
+```{r}
+X = cbind(1, newCleanWeight$DailyCaloricSurplusDeficit, newCleanWeight$SleepQuality, newCleanWeight$StressLevel)
+P = X %*% solve(t(X)%*%X, t(X))
+ros = (2*(4+1))/length(newCleanWeight$DailyCaloricSurplusDeficit)
+plot(newCleanWeight$DailyCaloricSurplusDeficit, hatvalues(reg3), xlab="Index i", ylab="Hat value", ylim=c(0,0.15))
+abline(h=ros, lty=2, col="red")
+```
+
+## Validation
+
 cross validation, r squre, adjust r square, mallow cp...
 
 ```{r}
