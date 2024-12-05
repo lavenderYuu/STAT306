@@ -159,5 +159,14 @@ We applied multiple linear regression to investigate how variables like age, str
 
 ## **Conclusion**
 
-The analysis identified key determinants of weight change, including caloric surplus, stress level, and sleep quality. Higher caloric surplus was significantly associated with weight gain, while better sleep quality correlated with more controlled weight changes. Stress level had a moderate impact, indicating the need for further research. Our findings demonstrated that behavioral factors significantly influence weight change. However, limitations such as the small sample size (n = 100) and lack of temporal data collection must be noted. Future studies should consider larger, more diverse datasets and include additional factors like metabolic rate changes.
+Our analysis identified key determinants of weight change, including caloric surplus, stress level, and sleep quality. Higher caloric surplus was significantly associated with increased weight gain, while better sleep quality correlated with more controlled weight changes. Stress level had a moderate impact, suggesting a potential area for further exploration.
 
+The Mallow’s Cp analysis confirmed that the final model achieved an optimal balance between complexity and fit. The Cp value closely aligned with the number of predictors in the model, indicating that we avoided overfitting while maintaining predictive accuracy.
+
+The p-values for retained predictors were statistically significant, ensuring that each variable contributed meaningfully to the model’s explanation of variance in weight change. Stepwise elimination based on these p-values further refined the model without compromising its explanatory power, as evidenced by a consistent adjusted R-squared value. This value suggested that the final model captured a substantial proportion of the variance in the data, offering robust insights while maintaining parsimony.
+
+Diagnostic evaluations provided additional validation. The residual plot demonstrated a random scatter around zero, affirming that the assumptions of linearity and homoscedasticity were met. Furthermore, the QQ plot confirmed that the residuals followed a normal distribution, further supporting the appropriateness of the linear regression approach.
+
+Despite these findings, the study faced limitations, including a small sample size (n = 100) and the lack of detailed temporal data collection. Future studies should consider using larger, more diverse datasets and additional factors such as metabolic rate changes or hormonal influences to enhance the model’s generalizability and accuracy.
+
+Overall, our findings highlighted the significant influence of behavioral factors on weight change, offering valuable insights for personalized weight management strategies.
