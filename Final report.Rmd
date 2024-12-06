@@ -78,7 +78,6 @@ To reduce multicollinearity, we sequentially removed variables with high VIF val
 
 With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
 
-
 ### **Visualizations and Key Features**
 
 -   **Histogram of Weight Change Per Week**
@@ -93,22 +92,21 @@ With low multicollinearity remaining in the dataset, we can now proceed with mor
 
     Before transformation:
 
-    ![](images/RvsF before t-01.jpg)
+    ![](images/RvsF%20before%20t-01.jpg)
 
     After transformation:
 
-    ![](images/RvsF after t.jpg)
+    ![](images/RvsF%20after%20t.jpg)
 
 -   **Correlation Heatmapand Multicollinearity Check**
 
     The correlation heatmap revealed strong correlations among predictors like `BMRCalories` and `DailyCaloriesConsumed`. VIF analysis confirmed high multicollinearity, necessitating the removal of these variables to enhance model reliability.
 
-    ![](images/Correlation Heatmap with Values.jpg)
+    ![](images/Correlation%20Heatmap%20with%20Values.jpg)
 
 -   **Model Selection Using Stepwise Elimination**
 
-    We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power.
-The summary of the full model is provided below, demonstrating the initial complexity before refinement:
+    We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power. The summary of the full model is provided below, demonstrating the initial complexity before refinement:
 
     ![](images/fullmodel.jpg)
 
@@ -120,10 +118,7 @@ The summary of the full model is provided below, demonstrating the initial compl
 
 -   **Mallow's Cp, Adjusted R-squared, and QQ Plot**
 
-    Mallow’s Cp analysis showed that the final model balanced complexity and predictive accuracy. The Cp value remained close to the number of predictors in the final model, indicating no excessive overfitting.
-Adjusted R-Squared confirmed that the model explained a substantial portion of the variance while maintaining parsimony, with no significant improvement when non-significant predictors were removed.
-Residual Plot analysis displayed no discernible patterns, demonstrating that the assumptions of linearity and homoscedasticity were met.
-QQ Plot indicated that the residuals closely followed the normal distribution, supporting the validity of the linear regression model.
+    Mallow’s Cp analysis showed that the final model balanced complexity and predictive accuracy. The Cp value remained close to the number of predictors in the final model, indicating no excessive overfitting. Adjusted R-Squared confirmed that the model explained a substantial portion of the variance while maintaining parsimony, with no significant improvement when non-significant predictors were removed. Residual Plot analysis displayed no discernible patterns, demonstrating that the assumptions of linearity and homoscedasticity were met. QQ Plot indicated that the residuals closely followed the normal distribution, supporting the validity of the linear regression model.
 
 ### **Statistical Methodology**
 
