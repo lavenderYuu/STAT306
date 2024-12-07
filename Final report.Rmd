@@ -38,7 +38,9 @@ A new variable, weightChangePerWeek, was created to provide a normalized measure
 
 The final cleaned dataset now includes a comprehensive set of variables: Age, Gender, BMRCalories, DailyCaloriesConsumed, PhysicalActivityLevel, SleepQuality, StressLevel, and the newly derived weightChangePerWeek. This enriched dataset enables deeper exploration of how various factors---such as caloric intake, sleep quality, and physical activity---interact to influence weight change.
 
--   **Boxplot:** The boxplot shows weekly weight change (**expWeightCPW**) across physical activity levels (Sedentary, Lightly Active, Moderately Active, Very Active). Higher activity levels correlate with greater weight change, with the **Very Active** group showing the highest median and widest variability (larger interquartile range and longer whiskers). The **Sedentary** group has the lowest median change. No significant outliers are present, suggesting consistent data. This trend indicates a positive link between activity level and weight change, though statistical tests are needed for confirmation.![](images/boxplot.jpg){width="305"}
+-   **Boxplot:**The boxplot illustrates the distribution of weight change per week (expWeightCPW) across different physical activity levels (Sedentary, Lightly Active, Moderately Active, and Very Active). It reveals that the median difference between levels is not large. The medians for Lightly Active and Sedentary are close together with similar distribution, and the p-value for Sedentary is high at 0.9, so we combined it with the baseline (Lightly Active).
+
+    .![](images/boxplot.jpg){width="305"}
 
 ## Transformation
 
@@ -82,15 +84,12 @@ To reduce multicollinearity, we sequentially removed variables with high VIF val
 
 With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
 
-Linear Assumption
+**Linear Assumption**
 
-Linearity: The relationship between the independent variables chosen and weight change is linear
-
-Independence: The dataset comprises data from 100 participants, and it is assumed that each participant's data represents an independent observation.
-
-Homoscedasticity: The residual plot indicates a random scatter of points around zero, suggesting that the assumption of homoscedasticity is satisfied.
-
-Normality of Residuals: The residuals are normally distributed.
+1.  Linearity: The relationship between the independent variables chosen and weight change is linear
+2.  Independence: The dataset comprises data from 100 participants, and it is assumed that each participant's data represents an independent observation.
+3.  Homoscedasticity: The residual plot indicates a random scatter of points around zero, suggesting that the assumption of homoscedasticity is satisfied.
+4.  Normality of Residuals: The residuals are normally distributed.
 
 ### **Statistical Methodology**
 
@@ -167,9 +166,9 @@ We applied multiple linear regression to investigate how variables like age, str
 
         -   We tested interaction terms, such as **DailyCaloricSurplusDeficit × StressLevel**, for statistical significance.
 
-        -   None of these terms were significant (p>0.05p > 0.05p\>0.05), leading to their exclusion to avoid unnecessary model complexity.
+        -   None of these terms were significant (p\>0.05p \> 0.05p\>0.05), leading to their exclusion to avoid unnecessary model complexity.
 
-        ![](images/mix 02.jpg)
+        ![](images/mix%2002.jpg)
 
         **Quadratic Relationships**:\
         To assess whether quadratic terms might enhance the model, we plotted scatterplots of covariates against the response variable (`weightChangePerWeek`). These plots showed no evident curvature, suggesting that relationships between covariates and weight change per week were linear. Therefore, quadratic terms were excluded from the model to maintain simplicity and interpretability.
