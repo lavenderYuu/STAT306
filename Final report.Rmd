@@ -2,6 +2,7 @@
 title: "Final report"
 output: pdf_document
 date: "2024-12-02"
+Group members: Ruodan Deng, Xiaomeng Zhou, Lavender YU, Anne Zhou
 ---
 
 ```{r setup, include=FALSE}
@@ -20,7 +21,7 @@ Data: <https://www.kaggle.com/datasets/abdullah0a/comprehensive-weight-change-pr
 
 ## Description of Data
 
-![](images/description.jpg)
+![](images/description.jpg){width="397"}
 
 ## **Data Cleaning**
 
@@ -42,13 +43,13 @@ To assess whether a transformation was needed for the model, we initially fit a 
 
 The plot revealed a left-skewed pattern in the residuals, suggesting that normality assumption of the model cannot be assumed. This indicated the need for a transformation.
 
-![](images/ResidualBeforeTransformation.jpg)
+![](images/ResidualBeforeTransformation.jpg){width="327"}
 
-![](images/histogram.jpg)
+![](images/histogram.jpg){width="300"}
 
 Therefore, we applied a logarithmic transformation to the weightChangePerWeek variable. After refitting the model using the transformed variable, the residual plot showed a more random scatter around zero, suggesting that the transformation had improved the fit and addressed the skewness in the data.
 
-![](images/RvsF%20after%20t.jpg)
+![](images/RvsF%20after%20t.jpg){width="310"}
 
 Finally, the transformed variable was added to the dataset as expWeightCPW, replacing the original weightChangePerWeek. This transformed dataset is now better prepared for further analysis.
 
@@ -58,7 +59,7 @@ To check for multicollinearity in the dataset, we first focused on the numeric v
 
 We visualized the correlation matrix using a heatmap, where stronger correlations were highlighted in red, and weaker correlations were shown in blue. This helped identify any highly correlated pairs of variables that might cause multicollinearity in regression models. The correlation heatmap revealed strong correlations among predictors like `BMRCalories` and `DailyCaloriesConsumed`
 
-![](images/Correlation%20Heatmap%20with%20Values.jpg)
+![](images/Correlation%20Heatmap%20with%20Values.jpg){width="317"}
 
 ### **VIF Interpretation:**
 
@@ -70,11 +71,11 @@ Next, we assessed multicollinearity by calculating the Variance Inflation Factor
 
 -   **VIF \> 10**: High multicollinearity (may require remedial measures, such as removing variables or PCA).
 
-    ![](images/VIFBefore.jpg)
+    ![](images/VIFBefore.jpg){width="366"}
 
 To reduce multicollinearity, we sequentially removed variables with high VIF values from the model. After each removal, we recalculated the VIF to check for improvement. Specifically, we removed the following variables:BMRCalories, DailyCaloriesConsumed, and FinalWeightLbs.
 
-![](images/VIFAfter.jpg)
+![](images/VIFAfter.jpg){width="321"}
 
 With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
 
@@ -98,7 +99,7 @@ We applied multiple linear regression to investigate how variables like age, str
 
     We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power. The summary of the full model is provided below, demonstrating the initial complexity before refinement:
 
-    ![](images/fullmodel.jpg)
+    ![](images/fullmodel.jpg){width="366"}
 
     #### **Model 1 (Full Model with 7 Variables):**
 
@@ -211,39 +212,41 @@ We applied multiple linear regression to investigate how variables like age, str
 
 **Regression Diagnostics**: Residual plots after transformation indicated that the model assumptions were satisfied, with no discernible patterns in the residuals.
 
-![](images/residual%20plot.jpg)
+![](images/residual%20plot.jpg){width="354"}
 
 -   **Boxplot:** The boxplot illustrates the distribution of weight change per week (expWeightCPW) across different physical activity levels (Sedentary, Lightly Active, Moderately Active, and Very Active). It reveals a clear trend where higher physical activity is associated with greater weight change. The Very Active group has the highest median weight change, while the Sedentary group exhibits the lowest. Additionally, the variability within the Very Active group is much higher, as indicated by a larger interquartile range and longer whiskers, suggesting that weight change among highly active individuals is more diverse. There are no significant outliers in any of the groups, indicating relatively consistent data within each category. Overall, the data suggests that physical activity level positively impacts weight change, but further statistical tests would be needed to confirm whether these differences are statistically significant.
 
-    ![](images/boxplot.jpg)
+    ![](images/boxplot.jpg){width="332"}
 
 -   **QQ Plot**: The QQ plot confirmed the residuals followed a normal distribution, supporting the validity of the model.
 
-    ### ![]()![](images/QQ%20plot.jpg)**Model Refinement**
+    ### ![]()![](images/QQ%20plot.jpg){width="298"}
+
+    ### **Model Refinement**
 
     ### **Interaction and Quadratic Terms**
 
     As part of our model refinement process, we investigated potential **interaction effects** and **quadratic relationships** to determine if their inclusion would improve the model's performance.
 
     -   **Interaction Effects**:\
-        We analyzed scatterplots for covariates across different levels of categorical variables, such as gender and physical activity level, and observed variation in slopes and intercepts. This prompted us to test the statistical significance of interaction terms (e.g., `DailyCaloricSurplusDeficit:StressLevel`). However, none of the interaction terms were statistically significant (p-values \> 0.05). Consequently, we decided not to include interaction terms in the final model, as their addition would increase complexity without providing meaningful improvement.
+        We analyzed scatterplots for covariates across different levels of categorical variables, such as gender and physical activity level, and observed variation in slopes and intercepts. This prompted us to test the statistical significance of interaction terms (e.g., `DailyCaloricSurplusDeficit*StressLevel`). However, none of the interaction terms were statistically significant (p-values \> 0.05). Consequently, we decided not to include interaction terms in the final model, as their addition would increase complexity without providing meaningful improvement.
 
-        ![](images/interation%2001.jpg)
+        ![](images/interation%2001.jpg){width="344"}
 
-        ![](images/WechatIMG516.jpg)
+        ![](images/WechatIMG516.jpg){width="360"}
 
-        ![](images/interaction%2003.jpg)**Quadratic Relationships**:\
+        ![](images/interaction%2003.jpg){width="340"}
+
+        **Quadratic Relationships**:\
         To assess whether quadratic terms might enhance the model, we plotted scatterplots of covariates against the response variable (`weightChangePerWeek`). These plots showed no evident curvature, suggesting that relationships between covariates and weight change per week were linear. Therefore, quadratic terms were excluded from the model to maintain simplicity and interpretability.
 
     Here are the three plot of the **Quadratic:**
 
-    ![](images/quadratic%2001.jpg)
+    ![](images/quadratic%2001.jpg){width="383"}![](images/quadratic%2002.jpg){width="397"}
 
-    ![](images/quadratic%2002.jpg)
+    ![](images/quadratic%2003.jpg){width="399"}
 
-    ![](images/quadratic%2003.jpg)
-
-### **Mallow's Cp, Adjusted R-squared, and QQ Plot**
+### **Mallow's Cp (**1.81619177250955**), Adjusted R-squared (0.6), and QQ Plot**
 
 Mallow's Cp analysis showed that the final model balanced complexity and predictive accuracy. The Cp value remained close to the number of predictors in the final model, indicating no excessive overfitting. Adjusted R-Squared confirmed that the model explained a substantial portion of the variance while maintaining parsimony, with no significant improvement when non-significant predictors were removed. Residual Plot analysis displayed no discernible patterns, demonstrating that the assumptions of linearity and homoscedasticity were met. QQ Plot indicated that the residuals closely followed the normal distribution, supporting the validity of the linear regression model.
 
@@ -259,7 +262,7 @@ Our final model, evaluated using Leave-One-Out Cross-Validation (LOOCV), yielded
 
 3.  **Model Complexity**: The relatively high error and moderate predictive accuracy could also reflect the challenges of capturing complex, nonlinear relationships between weight change and influencing factors within a simple linear model.
 
-    ![](images/WechatIMG532.jpg)
+    ![](images/WechatIMG532.jpg){width="385"}
 
 ### **Future Directions**
 
