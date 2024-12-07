@@ -20,7 +20,7 @@ Data: <https://www.kaggle.com/datasets/abdullah0a/comprehensive-weight-change-pr
 
 ## Description of Data
 
-![](Stat306_Images/Data_Description.png)
+![](images/description.jpg)
 
 ## **Data Cleaning**
 
@@ -34,7 +34,7 @@ The variable Participate ID will not be used in this project as it is not so hel
 
 A new variable, weightChangePerWeek, was created to provide a normalized measure of weight change by dividing the total weight change (WeightChangeLbs) by the duration of the study (DurationWeeks). This metric offers a clearer view of the rate of weight change over time.
 
-The final cleaned dataset now includes a comprehensive set of variables: Age, Gender, BMRCalories, DailyCaloriesConsumed, PhysicalActivityLevel, SleepQuality, StressLevel, and the newly derived weightChangePerWeek. This enriched dataset enables deeper exploration of how various factors—such as caloric intake, sleep quality, and physical activity—interact to influence weight change.
+The final cleaned dataset now includes a comprehensive set of variables: Age, Gender, BMRCalories, DailyCaloriesConsumed, PhysicalActivityLevel, SleepQuality, StressLevel, and the newly derived weightChangePerWeek. This enriched dataset enables deeper exploration of how various factors---such as caloric intake, sleep quality, and physical activity---interact to influence weight change.
 
 ## Transformation
 
@@ -42,83 +42,57 @@ To assess whether a transformation was needed for the model, we initially fit a 
 
 The plot revealed a left-skewed pattern in the residuals, suggesting that normality assumption of the model cannot be assumed. This indicated the need for a transformation.
 
-![](Screenshot%202024-12-03%20at%209.07.50%20AM.png)
+![](images/ResidualBeforeTransformation.jpg)
 
-![](Screenshot%202024-12-03%20at%209.07.55%20AM.png)
+![](images/histogram.jpg)
 
 Therefore, we applied a logarithmic transformation to the weightChangePerWeek variable. After refitting the model using the transformed variable, the residual plot showed a more random scatter around zero, suggesting that the transformation had improved the fit and addressed the skewness in the data.
 
-Finally, the transformed variable was added to the dataset as expWeightCPW, replacing the original weightChangePerWeek. This transformed dataset is now better prepared for further analysis.
+![](images/RvsF%20after%20t.jpg)
 
-![](Screenshot%202024-12-03%20at%209.08.44%20AM.png)
+Finally, the transformed variable was added to the dataset as expWeightCPW, replacing the original weightChangePerWeek. This transformed dataset is now better prepared for further analysis.
 
 ## **Multicollinearity**
 
 To check for multicollinearity in the dataset, we first focused on the numeric variables by calculating the correlation matrix. This allowed us to examine how strongly the variables are correlated with each other.
 
-We visualized the correlation matrix using a heatmap, where stronger correlations were highlighted in red, and weaker correlations were shown in blue. This helped identify any highly correlated pairs of variables that might cause multicollinearity in regression models.
+We visualized the correlation matrix using a heatmap, where stronger correlations were highlighted in red, and weaker correlations were shown in blue. This helped identify any highly correlated pairs of variables that might cause multicollinearity in regression models. The correlation heatmap revealed strong correlations among predictors like `BMRCalories` and `DailyCaloriesConsumed`
 
-![](Screenshot%202024-12-03%20at%209.09.14%20AM.png)
-
-Next, we assessed multicollinearity by calculating the Variance Inflation Factor (VIF) for the regression model. High VIF values indicate that a predictor variable is highly correlated with other predictors, which can lead to unreliable estimates in the model.
+![](images/Correlation%20Heatmap%20with%20Values.jpg)
 
 ### **VIF Interpretation:**
 
+Next, we assessed multicollinearity by calculating the Variance Inflation Factor (VIF) for the regression model. High VIF values indicate that a predictor variable is highly correlated with other predictors, which can lead to unreliable estimates in the model.
+
 -   **VIF \< 5**: Low multicollinearity, no further action required.
 
--   **VIF 5–10**: Moderate multicollinearity (consider investigating further).
+-   **VIF 5--10**: Moderate multicollinearity (consider investigating further).
 
 -   **VIF \> 10**: High multicollinearity (may require remedial measures, such as removing variables or PCA).
 
-    ![](Screenshot%202024-12-03%20at%209.09.44%20AM.png)
+    ![](images/VIFBefore.jpg)
 
 To reduce multicollinearity, we sequentially removed variables with high VIF values from the model. After each removal, we recalculated the VIF to check for improvement. Specifically, we removed the following variables:BMRCalories, DailyCaloriesConsumed, and FinalWeightLbs.
 
-![](Screenshot%202024-12-03%20at%209.10.13%20AM.png)
+![](images/VIFAfter.jpg)
 
 With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
 
-### **Visualizations and Key Features**
+### **Model Selection Using Stepwise Elimination**
 
--   **Histogram of Weight Change Per Week**
+We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power. The summary of the full model is provided below, demonstrating the initial complexity before refinement:
 
-    The initial histogram of `weightChangePerWeek` displayed a left-skewed distribution, emphasizing the need for transformation. This skewness indicated potential violations of the normality assumption critical for linear regression models.
+![](images/fullmodel.jpg)
 
-    > ![](images/histogram.jpg)
+### **Interaction and Quadratic Terms**
 
--   **Residuals vs. Fitted Values Plot(Before and After Transformation)**
+We examined potential interaction effects between key variables like DailyCaloricSurplusDeficit and StressLevel and explored quadratic relationships. As shown in the diagnostic plots generated by Mengmeng, the slopes remained consistent across different levels of the interacting variables, and no evidence of curvature was observed. This confirmed that adding interaction or quadratic terms would not significantly enhance model performance. Therefore, the simpler linear model was retained.
 
-    Before transformation, the residuals vs. fitted values plot showed a distinct pattern, suggesting heteroscedasticity. Post-logarithmic transformation (`expWeightCPW`), the residuals appeared randomly scattered around zero, indicating improved adherence to the assumptions of linearity and homoscedasticity.
+![](images/WechatIMG516.jpg)
 
-    Before transformation:
+### **Mallow's Cp, Adjusted R-squared, and QQ Plot**
 
-    ![](images/RvsF%20before%20t-01.jpg)
-
-    After transformation:
-
-    ![](images/RvsF%20after%20t.jpg)
-
--   **Correlation Heatmapand Multicollinearity Check**
-
-    The correlation heatmap revealed strong correlations among predictors like `BMRCalories` and `DailyCaloriesConsumed`. VIF analysis confirmed high multicollinearity, necessitating the removal of these variables to enhance model reliability.
-
-    ![](images/Correlation%20Heatmap%20with%20Values.jpg)
-
--   **Model Selection Using Stepwise Elimination**
-
-    We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power. The summary of the full model is provided below, demonstrating the initial complexity before refinement:
-
-    ![](images/fullmodel.jpg)
-
--   **Interaction and Quadratic Terms**
-
-    We examined potential interaction effects between key variables like DailyCaloricSurplusDeficit and StressLevel and explored quadratic relationships. As shown in the diagnostic plots generated by Mengmeng, the slopes remained consistent across different levels of the interacting variables, and no evidence of curvature was observed. This confirmed that adding interaction or quadratic terms would not significantly enhance model performance. Therefore, the simpler linear model was retained.
-
-    ![](images/WechatIMG516.jpg)
-
--   **Mallow's Cp, Adjusted R-squared, and QQ Plot**
-
-    Mallow’s Cp analysis showed that the final model balanced complexity and predictive accuracy. The Cp value remained close to the number of predictors in the final model, indicating no excessive overfitting. Adjusted R-Squared confirmed that the model explained a substantial portion of the variance while maintaining parsimony, with no significant improvement when non-significant predictors were removed. Residual Plot analysis displayed no discernible patterns, demonstrating that the assumptions of linearity and homoscedasticity were met. QQ Plot indicated that the residuals closely followed the normal distribution, supporting the validity of the linear regression model.
+Mallow's Cp analysis showed that the final model balanced complexity and predictive accuracy. The Cp value remained close to the number of predictors in the final model, indicating no excessive overfitting. Adjusted R-Squared confirmed that the model explained a substantial portion of the variance while maintaining parsimony, with no significant improvement when non-significant predictors were removed. Residual Plot analysis displayed no discernible patterns, demonstrating that the assumptions of linearity and homoscedasticity were met. QQ Plot indicated that the residuals closely followed the normal distribution, supporting the validity of the linear regression model.
 
 ### **Statistical Methodology**
 
