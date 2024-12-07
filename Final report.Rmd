@@ -37,6 +37,10 @@ A new variable, weightChangePerWeek, was created to provide a normalized measure
 
 The final cleaned dataset now includes a comprehensive set of variables: Age, Gender, BMRCalories, DailyCaloriesConsumed, PhysicalActivityLevel, SleepQuality, StressLevel, and the newly derived weightChangePerWeek. This enriched dataset enables deeper exploration of how various factors---such as caloric intake, sleep quality, and physical activity---interact to influence weight change.
 
+-   **Boxplot:** The boxplot illustrates the distribution of weight change per week (expWeightCPW) across different physical activity levels (Sedentary, Lightly Active, Moderately Active, and Very Active). It reveals a clear trend where higher physical activity is associated with greater weight change. The Very Active group has the highest median weight change, while the Sedentary group exhibits the lowest. Additionally, the variability within the Very Active group is much higher, as indicated by a larger interquartile range and longer whiskers, suggesting that weight change among highly active individuals is more diverse. There are no significant outliers in any of the groups, indicating relatively consistent data within each category. Overall, the data suggests that physical activity level positively impacts weight change, but further statistical tests would be needed to confirm whether these differences are statistically significant.
+
+    ![](images/boxplot.jpg){width="305"}
+
 ## Transformation
 
 To assess whether a transformation was needed for the model, we initially fit a linear regression model using weightChangePerWeek as the response variable and all other factors as predictors. The residuals from this model were plotted against the fitted values to check for any obvious patterns or trends that might indicate issues with the assumptions of linear regression.
@@ -71,7 +75,7 @@ Next, we assessed multicollinearity by calculating the Variance Inflation Factor
 
 -   **VIF \> 10**: High multicollinearity (may require remedial measures, such as removing variables or PCA).
 
-    ![](images/VIFBefore.jpg){width="366"}
+    ![](images/VIFBefore.jpg){width="307"}
 
 To reduce multicollinearity, we sequentially removed variables with high VIF values from the model. After each removal, we recalculated the VIF to check for improvement. Specifically, we removed the following variables:BMRCalories, DailyCaloriesConsumed, and FinalWeightLbs.
 
@@ -97,11 +101,13 @@ We applied multiple linear regression to investigate how variables like age, str
 
     ### **Model Selection Using Stepwise Elimination**
 
-    We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power. The summary of the full model is provided below, demonstrating the initial complexity before refinement:
+    We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power. The final summary of the model is provided below:
 
-    ![](images/fullmodel.jpg){width="366"}
+    ![](images/final model.jpg){width="307"}
 
-    #### **Model 1 (Full Model with 7 Variables):**
+    Here are the estimate values from the final model: **Intercept**: 0.3580707; **DailyCaloricSurplusDeficit**: 0.0002750; **SleepQuality**: 0.2869132; **StressLevel**: -0.0803017
+
+    **Model 1 (Full Model with 7 Variables):**
 
     -   **Significant Variables:**
 
@@ -179,17 +185,9 @@ We applied multiple linear regression to investigate how variables like age, str
 
 **Regression Diagnostics**: Residual plots after transformation indicated that the model assumptions were satisfied, with no discernible patterns in the residuals.
 
-![](images/residual%20plot.jpg){width="354"}
+![](images/residual%20plot.jpg){width="303"}
 
--   **Boxplot:** The boxplot illustrates the distribution of weight change per week (expWeightCPW) across different physical activity levels (Sedentary, Lightly Active, Moderately Active, and Very Active). It reveals a clear trend where higher physical activity is associated with greater weight change. The Very Active group has the highest median weight change, while the Sedentary group exhibits the lowest. Additionally, the variability within the Very Active group is much higher, as indicated by a larger interquartile range and longer whiskers, suggesting that weight change among highly active individuals is more diverse. There are no significant outliers in any of the groups, indicating relatively consistent data within each category. Overall, the data suggests that physical activity level positively impacts weight change, but further statistical tests would be needed to confirm whether these differences are statistically significant.
-
-    ![](images/boxplot.jpg){width="332"}
-
--   **QQ Plot**: The QQ plot confirmed the residuals followed a normal distribution, supporting the validity of the model.
-
-    ### ![](images/QQ%20plot.jpg){width="298"}
-
-    ### **Model Refinement**
+-   **Model Refinement**
 
     ### **Interaction and Quadratic Terms**
 
@@ -198,20 +196,18 @@ We applied multiple linear regression to investigate how variables like age, str
     -   **Interaction Effects**:\
         We analyzed scatterplots for covariates across different levels of categorical variables, such as gender and physical activity level, and observed variation in slopes and intercepts. This prompted us to test the statistical significance of interaction terms (e.g., `DailyCaloricSurplusDeficit*StressLevel`). However, none of the interaction terms were statistically significant (p-values \> 0.05). Consequently, we decided not to include interaction terms in the final model, as their addition would increase complexity without providing meaningful improvement.
 
-        ![](images/interation%2001.jpg){width="344"}
-
-        ![](images/WechatIMG516.jpg){width="360"}
-
-        ![](images/interaction%2003.jpg){width="340"}
+        ![](images/interation%2001.jpg){width="227"}![](images/WechatIMG516.jpg){width="221"}![](images/interaction%2003.jpg){width="201"}
 
         **Quadratic Relationships**:\
         To assess whether quadratic terms might enhance the model, we plotted scatterplots of covariates against the response variable (`weightChangePerWeek`). These plots showed no evident curvature, suggesting that relationships between covariates and weight change per week were linear. Therefore, quadratic terms were excluded from the model to maintain simplicity and interpretability.
 
     Here are the three plot of the **Quadratic:**
 
-    ![](images/quadratic%2001.jpg){width="383"}![](images/quadratic%2002.jpg){width="397"}
+    ![](images/quadratic%2001.jpg){width="229"}![](images/quadratic%2002.jpg){width="221"}![](images/quadratic%2003.jpg){width="216"}
 
-    ![](images/quadratic%2003.jpg){width="399"}
+-   **QQ Plot**: The QQ plot confirmed the residuals followed a normal distribution, supporting the validity of the model.
+
+    ### ![](images/QQ%20plot.jpg){width="298"}
 
 ### **Mallow's Cp (**1.81619177250955**), Adjusted R-squared (0.6), and QQ Plot**
 
