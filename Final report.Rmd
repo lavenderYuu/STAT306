@@ -82,6 +82,16 @@ To reduce multicollinearity, we sequentially removed variables with high VIF val
 
 With low multicollinearity remaining in the dataset, we can now proceed with more reliable modeling.
 
+Linear Assumption
+
+Linearity: The relationship between the independent variables chosen and weight change is linear
+
+Independence: The dataset comprises data from 100 participants, and it is assumed that each participant's data represents an independent observation.
+
+Homoscedasticity: The residual plot indicates a random scatter of points around zero, suggesting that the assumption of homoscedasticity is satisfied.
+
+Normality of Residuals: The residuals are normally distributed.
+
 ### **Statistical Methodology**
 
 We applied multiple linear regression to investigate how variables like age, stress level, and sleep quality affect weight change per week. To ensure valid inferences:
