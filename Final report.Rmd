@@ -1,13 +1,14 @@
 ---
 title: "Final report"
 output: pdf_document
-date: "2024-12-02"
-Group members: Ruodan Deng, Xiaomeng Zhou, Lavender YU, Anne Zhou
+date: "2024-12-06"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+group members: Ruodan Deng, Xiaomeng Zhou, Lavender YU, Anne Zhou
 
 ## Background
 
@@ -21,7 +22,7 @@ Data: <https://www.kaggle.com/datasets/abdullah0a/comprehensive-weight-change-pr
 
 ## Description of Data
 
-![](images/description.jpg){width="397"}
+![](images/description.jpg){width="304"}
 
 ## **Data Cleaning**
 
@@ -37,19 +38,17 @@ A new variable, weightChangePerWeek, was created to provide a normalized measure
 
 The final cleaned dataset now includes a comprehensive set of variables: Age, Gender, BMRCalories, DailyCaloriesConsumed, PhysicalActivityLevel, SleepQuality, StressLevel, and the newly derived weightChangePerWeek. This enriched dataset enables deeper exploration of how various factors---such as caloric intake, sleep quality, and physical activity---interact to influence weight change.
 
--   **Boxplot:** The boxplot illustrates the distribution of weight change per week (expWeightCPW) across different physical activity levels (Sedentary, Lightly Active, Moderately Active, and Very Active). It reveals a clear trend where higher physical activity is associated with greater weight change. The Very Active group has the highest median weight change, while the Sedentary group exhibits the lowest. Additionally, the variability within the Very Active group is much higher, as indicated by a larger interquartile range and longer whiskers, suggesting that weight change among highly active individuals is more diverse. There are no significant outliers in any of the groups, indicating relatively consistent data within each category. Overall, the data suggests that physical activity level positively impacts weight change, but further statistical tests would be needed to confirm whether these differences are statistically significant.
-
-    ![](images/boxplot.jpg){width="305"}
+-   **Boxplot:** The boxplot shows weekly weight change (**expWeightCPW**) across physical activity levels (Sedentary, Lightly Active, Moderately Active, Very Active). Higher activity levels correlate with greater weight change, with the **Very Active** group showing the highest median and widest variability (larger interquartile range and longer whiskers). The **Sedentary** group has the lowest median change. No significant outliers are present, suggesting consistent data. This trend indicates a positive link between activity level and weight change, though statistical tests are needed for confirmation.![](images/boxplot.jpg){width="305"}
 
 ## Transformation
 
 To assess whether a transformation was needed for the model, we initially fit a linear regression model using weightChangePerWeek as the response variable and all other factors as predictors. The residuals from this model were plotted against the fitted values to check for any obvious patterns or trends that might indicate issues with the assumptions of linear regression.
 
-The plot revealed a left-skewed pattern in the residuals, suggesting that normality assumption of the model cannot be assumed. This indicated the need for a transformation.
+The plot revealed a left-skewed pattern in the residuals, suggesting that normality assumption of the model cannot be assumed. This indicated the need for a transformation
 
-![](images/ResidualBeforeTransformation.jpg){width="327"}
+![](images/ResidualBeforeTransformation.jpg){width="266"}
 
-![](images/histogram.jpg){width="300"}
+![](images/histogram.jpg){width="264"}
 
 Therefore, we applied a logarithmic transformation to the weightChangePerWeek variable. After refitting the model using the transformed variable, the residual plot showed a more random scatter around zero, suggesting that the transformation had improved the fit and addressed the skewness in the data.
 
@@ -103,77 +102,39 @@ We applied multiple linear regression to investigate how variables like age, str
 
     We started with a full model that included all potential predictors. Using a test-based approach, predictors were iteratively removed based on their p-values. Each elimination step was checked to ensure that the adjusted R-squared value did not significantly increase or decrease, indicating that the model retained its explanatory power. The final summary of the model is provided below:
 
-    ![](images/final model.jpg){width="307"}
+    ![](images/final%20model.jpg){width="307"}
 
     Here are the estimate values from the final model: **Intercept**: 0.3580707; **DailyCaloricSurplusDeficit**: 0.0002750; **SleepQuality**: 0.2869132; **StressLevel**: -0.0803017
 
-    **Model 1 (Full Model with 7 Variables):**
+    **Model 1**:
 
-    -   **Significant Variables:**
+    -   **Significant**: DailyCaloricSurplusDeficit (p = 0.0117), SleepQuality (p = 2.16e-15), StressLevel (p = 1.42e-08).
 
-        -   **DailyCaloricSurplusDeficit** (p = 0.0117): This variable is statistically significant at the 0.05 level. A positive coefficient indicates that as caloric surplus/deficit increases, the expected weight change increases.
+    -   **Insignificant**: Age, GenderF, CurrentWeightLbs, PhysicalActivityLevel.
 
-        -   **SleepQuality** (p = 2.16e-15): This variable has a very low p-value, suggesting it is highly significant. A positive coefficient implies that better sleep quality is associated with greater expected weight change.
+    **Model 2** (Excludes PhysicalActivityLevel):
 
-        -   **StressLevel** (p = 1.42e-08): Stress level also significantly affects weight change, with a negative coefficient suggesting that higher stress levels are associated with a decrease in expected weight change.
+    -   **Significant**: DailyCaloricSurplusDeficit (p = 0.00113), SleepQuality (p = 4.64e-16), StressLevel (p = 7.19e-09).
 
-    -   **Insignificant Variables:**
+    -   **Insignificant**: Age, GenderF, CurrentWeightLbs.
 
-        -   **Age**, **GenderF**, **CurrentWeightLbs**, and **PhysicalActivityLevel** all have p-values greater than 0.05, suggesting that they are not statistically significant predictors in this model.
+    **Model 3** (Excludes CurrentWeightLbs & PhysicalActivityLevel):
 
-    #### **Model 2 (Excluding PhysicalActivityLevel):**
+    -   **Significant**: DailyCaloricSurplusDeficit (p = 0.00125), SleepQuality (p = 3.69e-16), StressLevel (p = 5.66e-09).
 
-    -   **Significant Variables:**
+    -   **Insignificant**: Age, GenderF.
 
-        -   **DailyCaloricSurplusDeficit** (p = 0.00113): The caloric surplus/deficit remains a significant predictor.
+    **Model 4** (Excludes Age & CurrentWeightLbs):
 
-        -   **SleepQuality** (p = 4.64e-16): The effect of sleep quality is highly significant.
+    -   **Significant**: DailyCaloricSurplusDeficit (p = 0.00139), SleepQuality (p = 2.58e-16), StressLevel (p = 4.45e-09).
 
-        -   **StressLevel** (p = 7.19e-09): Stress continues to significantly influence weight change.
+    -   **Insignificant**: GenderF.
 
-    -   **Insignificant Variables:**
+    **Model 5** (Excludes Age, Gender, CurrentWeightLbs, PhysicalActivityLevel):
 
-        -   **Age**, **GenderF**, and **CurrentWeightLbs** are not significant in this model either, and removing **PhysicalActivityLevel** does not change this.
+    -   **Significant**: DailyCaloricSurplusDeficit (p = 0.00185), SleepQuality (p = 2.78e-16), StressLevel (p = 5.27e-09).
 
-    #### **Model 3 (Excluding CurrentWeightLbs and PhysicalActivityLevel):**
-
-    -   **Significant Variables:**
-
-        -   **DailyCaloricSurplusDeficit** (p = 0.00125): Caloric surplus/deficit remains significant.
-
-        -   **SleepQuality** (p = 3.69e-16): Sleep quality continues to show a strong effect on weight change.
-
-        -   **StressLevel** (p = 5.66e-09): Stress level remains a strong predictor of weight change.
-
-    -   **Insignificant Variables:**
-
-        -   **Age** and **GenderF** remain insignificant, indicating that they do not provide additional value when considering just **DailyCaloricSurplusDeficit**, **SleepQuality**, and **StressLevel**.
-
-    #### **Model 4 (Excluding Age and CurrentWeightLbs):**
-
-    -   **Significant Variables:**
-
-        -   **DailyCaloricSurplusDeficit** (p = 0.00139): This variable is significant and positively correlated with expected weight change.
-
-        -   **SleepQuality** (p = 2.58e-16): The effect of sleep quality is again very strong and statistically significant.
-
-        -   **StressLevel** (p = 4.45e-09): Stress continues to be a significant negative predictor.
-
-    -   **Insignificant Variables:**
-
-        -   **GenderF** is not significant in this model (p = 0.34555), suggesting that gender does not play a major role in the model once other variables are included.
-
-    #### **Model 5 (Excluding Age, Gender, CurrentWeightLbs, and PhysicalActivityLevel):**
-
-    -   **Significant Variables:**
-
-        -   **DailyCaloricSurplusDeficit** (p = 0.00185): The caloric surplus/deficit remains a significant predictor.
-
-        -   **SleepQuality** (p = 2.78e-16): Sleep quality is strongly correlated with expected weight change.
-
-        -   **StressLevel** (p = 5.27e-09): Stress level is still a significant predictor.
-
--   During the model selection process, we tested the significance of the predictors through backwards selection, The focus was on removing variables that were not statistically significant. This process involved analyzing the **p-values** of each predictor in the regression analysis.
+        During the model selection process, we tested the significance of the predictors through backwards selection, The focus was on removing variables that were not statistically significant. This process involved analyzing the **p-values** of each predictor in the regression analysis.
 
     1.  **Significant Predictors**:\
         Predictors such as `DailyCaloricSurplusDeficit`, `SleepQuality`, and `StressLevel` had extremely low p-values (p \< 0.01), indicating their strong association with the response variable, `weightChangePerWeek`. Given their high level of significance, we retained these predictors in the final model.
@@ -187,23 +148,25 @@ We applied multiple linear regression to investigate how variables like age, str
 
 ![](images/residual%20plot.jpg){width="303"}
 
--   **Model Refinement**
+-   **Model Refinement**\
+    As part of our refinement process, we explored the inclusion of interaction effects and quadratic relationships:
 
-    ### **Interaction and Quadratic Terms**
+    1.  **Interaction Effects**:
 
-    As part of our model refinement process, we investigated potential **interaction effects** and **quadratic relationships** to determine if their inclusion would improve the model's performance.
+        -   Scatterplots of covariates across **StressLevel**, **SleepQuality**, and **DailyCaloricSurplusDeficit** revealed variations in slopes and intercepts.
 
-    -   **Interaction Effects**:\
-        We analyzed scatterplots for covariates across different levels of categorical variables, such as gender and physical activity level, and observed variation in slopes and intercepts. This prompted us to test the statistical significance of interaction terms (e.g., `DailyCaloricSurplusDeficit*StressLevel`). However, none of the interaction terms were statistically significant (p-values \> 0.05). Consequently, we decided not to include interaction terms in the final model, as their addition would increase complexity without providing meaningful improvement.
+        -   We tested interaction terms, such as **DailyCaloricSurplusDeficit × StressLevel**, for statistical significance.
 
-        ![](images/interation%2001.jpg){width="227"}![](images/WechatIMG516.jpg){width="221"}![](images/interaction%2003.jpg){width="201"}
+        -   None of these terms were significant (p>0.05p > 0.05p\>0.05), leading to their exclusion to avoid unnecessary model complexity.
+
+        ![](images/mix 02.jpg)
 
         **Quadratic Relationships**:\
         To assess whether quadratic terms might enhance the model, we plotted scatterplots of covariates against the response variable (`weightChangePerWeek`). These plots showed no evident curvature, suggesting that relationships between covariates and weight change per week were linear. Therefore, quadratic terms were excluded from the model to maintain simplicity and interpretability.
 
     Here are the three plot of the **Quadratic:**
 
-    ![](images/quadratic%2001.jpg){width="229"}![](images/quadratic%2002.jpg){width="221"}![](images/quadratic%2003.jpg){width="216"}
+    ![](images/mix.jpg)
 
 -   **QQ Plot**: The QQ plot confirmed the residuals followed a normal distribution, supporting the validity of the model.
 
@@ -212,8 +175,6 @@ We applied multiple linear regression to investigate how variables like age, str
 ### **Mallow's Cp (**1.81619177250955**), Adjusted R-squared (0.6), and QQ Plot**
 
 Mallow's Cp analysis showed that the final model balanced complexity and predictive accuracy. The Cp value remained close to the number of predictors in the final model, indicating no excessive overfitting. Adjusted R-Squared confirmed that the model explained a substantial portion of the variance while maintaining parsimony, with no significant improvement when non-significant predictors were removed. Residual Plot analysis displayed no discernible patterns, demonstrating that the assumptions of linearity and homoscedasticity were met. QQ Plot indicated that the residuals closely followed the normal distribution, supporting the validity of the linear regression model.
-
-------------------------------------------------------------------------
 
 ## **Conclusion**
 
@@ -225,7 +186,7 @@ Our final model, evaluated using Leave-One-Out Cross-Validation (LOOCV), yielded
 
 3.  **Model Complexity**: The relatively high error and moderate predictive accuracy could also reflect the challenges of capturing complex, nonlinear relationships between weight change and influencing factors within a simple linear model.
 
-    ![](images/WechatIMG532.jpg){width="385"}
+    ![](images/WechatIMG532.jpg){width="285"}
 
 ### **Future Directions**
 
