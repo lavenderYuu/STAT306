@@ -150,18 +150,58 @@ We applied multiple linear regression to investigate how variables like age, str
 
 -   **QQ Plot**: The QQ plot confirmed the residuals followed a normal distribution, supporting the validity of the model.
 
+    ![]()![](images/QQ%20plot.jpg)
+
+-   **Model Refinement**
+
+    As part of our model refinement process, we investigated potential **interaction effects** and **quadratic relationships** to determine if their inclusion would improve the model\'s performance.
+
+    -   **Interaction Effects**:\
+        We analyzed scatterplots for covariates across different levels of categorical variables, such as gender and physical activity level, and observed variation in slopes and intercepts. This prompted us to test the statistical significance of interaction terms (e.g., `DailyCaloricSurplusDeficit:StressLevel`). However, none of the interaction terms were statistically significant (p-values \> 0.05). Consequently, we decided not to include interaction terms in the final model, as their addition would increase complexity without providing meaningful improvement.
+
+-   **Quadratic Relationships**:\
+    To assess whether quadratic terms might enhance the model, we plotted scatterplots of covariates against the response variable (`weightChangePerWeek`). These plots showed no evident curvature, suggesting that relationships between covariates and weight change per week were linear. Therefore, quadratic terms were excluded from the model to maintain simplicity and interpretability.
+
+    Here are the three plot of the **Quadratic:**
+
+    ![](images/quadratic 01.jpg)
+
+    ![](images/quadratic 02.jpg)
+
+    ![](images/quadratic 03.jpg)
+
+-   **Model Refinement with Statistically Significant Predictors**
+
+    During the model refinement process, we tested the significance of the predictors through stepwise elimination, focusing on retaining only those variables with a statistically significant contribution to the model. This process involved analyzing the **p-values** of each predictor in the regression analysis.
+
+    1.  **Significant Predictors**:\
+        Predictors such as `DailyCaloricSurplusDeficit`, `SleepQuality`, and `StressLevel` had extremely low p-values (p \< 0.01), indicating their strong association with the response variable, `weightChangePerWeek`. Given their high level of significance, we retained these predictors in the final model.
+
+    2.  **Excluded Predictors**:\
+        Variables like `BMRCalories` and `DailyCaloriesConsumed` were excluded due to their high p-values (p \> 0.05) and multicollinearity issues, as indicated by Variance Inflation Factor (VIF) analysis. These variables did not provide additional explanatory power and were removed to improve model reliability.
+
+    By retaining only the statistically significant predictors, the final model captured the most critical factors influencing weight change while ensuring interpretability and reducing overfitting. The substantial reduction in p-values during this refinement process underscores the importance of these variables in explaining variance in weight change.
+
 ------------------------------------------------------------------------
 
 ## **Conclusion**
 
-Our analysis identified key determinants of weight change, including caloric surplus, stress level, and sleep quality. Higher caloric surplus was significantly associated with increased weight gain, while better sleep quality correlated with more controlled weight changes. Stress level had a moderate impact, suggesting a potential area for further exploration.
+Our final model, evaluated using Leave-One-Out Cross-Validation (LOOCV), yielded a Mean Squared Error (MSE) of **0.3396**. This corresponds to an approximate predictive accuracy of **66%**, suggesting room for improvement in the model\'s performance. While the adjusted R-squared value and Mallow\'s Cp analysis supported the model's validity, this accuracy level indicates that certain limitations may have influenced the results:
 
-The Mallow’s Cp analysis confirmed that the final model achieved an optimal balance between complexity and fit. The Cp value closely aligned with the number of predictors in the model, indicating that we avoided overfitting while maintaining predictive accuracy.
+1.  **Sample Size**: The dataset comprised only 100 participants, which might not sufficiently capture the variability in weight change across diverse populations.
 
-The p-values for retained predictors were statistically significant, ensuring that each variable contributed meaningfully to the model’s explanation of variance in weight change. Stepwise elimination based on these p-values further refined the model without compromising its explanatory power, as evidenced by a consistent adjusted R-squared value. This value suggested that the final model captured a substantial proportion of the variance in the data, offering robust insights while maintaining parsimony.
+2.  **Predictor Selection**: Despite our efforts to select significant predictors, it is possible that important variables influencing weight change---such as metabolic rate, hormonal factors, or detailed dietary patterns---were omitted due to the limitations of the dataset.
 
-Diagnostic evaluations provided additional validation. The residual plot demonstrated a random scatter around zero, affirming that the assumptions of linearity and homoscedasticity were met. Furthermore, the QQ plot confirmed that the residuals followed a normal distribution, further supporting the appropriateness of the linear regression approach.
+3.  **Model Complexity**: The relatively high error and moderate predictive accuracy could also reflect the challenges of capturing complex, nonlinear relationships between weight change and influencing factors within a simple linear model.
 
-Despite these findings, the study faced limitations, including a small sample size (n = 100) and the lack of detailed temporal data collection. Future studies should consider using larger, more diverse datasets and additional factors such as metabolic rate changes or hormonal influences to enhance the model’s generalizability and accuracy.
+### **Future Directions**
 
-Overall, our findings highlighted the significant influence of behavioral factors on weight change, offering valuable insights for personalized weight management strategies.
+To improve the model's accuracy and robustness in future studies, we recommend the following:
+
+-   **Incorporating Additional Predictors**: Including variables such as metabolic rate fluctuations, detailed dietary patterns, and stress management techniques could better capture the factors driving weight change.
+
+-   **Expanding the Dataset**: Collecting data from a larger and more diverse population would enhance the generalizability of the model and reduce overfitting risks.
+
+-   **Exploring Advanced Models**: Nonlinear or machine learning models, such as Random Forests or Gradient Boosting, might better capture complex interactions between predictors.
+
+Although this model did not perform as well as expected, it highlights key behavioral factors influencing weight change, providing valuable insights for personalizing weight management strategies. Future iterations of this analysis, incorporating a broader dataset and additional predictors, hold promise for achieving more accurate and actionable results.
