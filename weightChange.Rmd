@@ -293,7 +293,7 @@ summary(reg4)
 
 ```{r}
 reg4 %>%
-  ggplot(aes(x = reg6$fitted.values , y = reg4$residuals)) +
+  ggplot(aes(x = reg4$fitted.values , y = reg4$residuals)) +
   geom_point() +
    labs(title = "Residuals vs. Fitted value",
        x = "fitted values", y = "residuals")
@@ -332,21 +332,33 @@ ggplot(newCleanWeight, aes(x = DailyCaloricSurplusDeficit, y = expWeightCPW, col
 ggplot(newCleanWeight, aes(x = DailyCaloricSurplusDeficit, y = expWeightCPW, color = as.factor(StressLevel))) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "PhysicalActivityLevel and SleepQuality",
-       x = "Sleep Quality",
+  labs(title = "PhysicalActivityLevel and Stress Level",
+       x = "Stress Level",
+       y = "Weight Change Per Week")
+```
+```{r}
+ggplot(newCleanWeight, aes(x = StressLevel, y = expWeightCPW, color = as.factor(SleepQuality))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "PhysicalActivityLevel and Stress Level",
+       x = "Stress Level",
        y = "Weight Change Per Week")
 ```
 
-The slope of the fitted line does not change significantly, and we can test the significance of the interaction term to determine whether to include interaction.
+The slope of the fitted line show some change, and we can test the significance of the interaction term to determine whether to include interaction.
 
 ```{r}
-regLab <- lm(exp(expWeightCPW) ~ DailyCaloricSurplusDeficit * SleepQuality + StressLevel,  newCleanWeight)
-summary(regLab)
+regLab_inter1 <- lm(exp(expWeightCPW) ~ DailyCaloricSurplusDeficit * SleepQuality + StressLevel,  newCleanWeight)
+summary(regLab_inter1)
 ```
 
 ```{r}
-regLab <- lm(exp(expWeightCPW) ~ DailyCaloricSurplusDeficit * StressLevel +  SleepQuality,  newCleanWeight)
-summary(regLab)
+regLab_inter2 <- lm(exp(expWeightCPW) ~ DailyCaloricSurplusDeficit * StressLevel +  SleepQuality,  newCleanWeight)
+summary(regLab_inter2)
+```
+```{r}
+regLab_inter3 <- lm(exp(expWeightCPW) ~ DailyCaloricSurplusDeficit + StressLevel*SleepQuality,  newCleanWeight)
+summary(regLab_inter3)
 ```
 
 All of the interaction terms are not significant, so we don't include the interaction.
@@ -359,10 +371,16 @@ All of the interaction terms are not significant, so we don't include the intera
 ggplot(data = cleanWeight, aes(x = SleepQuality, y = weightChangePerWeek)) +
   geom_point() +
   labs(title = "Linear vs Quadratic Fit", x = "Sleep Quality", y = "weight Change Per Week")
-
+```
+```{r}
 ggplot(data = cleanWeight, aes(x = StressLevel, y = weightChangePerWeek)) +
   geom_point() +
   labs(title = "Linear vs Quadratic Fit", x = "Stress Level", y = "weight Change Per Week")
+```
+```{r}
+ggplot(data = cleanWeight, aes(x = DailyCaloricSurplusDeficit, y = weightChangePerWeek)) +
+  geom_point() +
+  labs(title = "Linear vs Quadratic Fit", x = "Daily Caloric Surplus Deficit", y = "weight Change Per Week")
 ```
 
 The scatter plot shows that Sleep Quality, Stress Level and weight Change Per Week do not have an obvious quadratic shape, so we still choose the linear model.
