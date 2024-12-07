@@ -48,9 +48,7 @@ To assess whether a transformation was needed for the model, we initially fit a 
 
 The plot revealed a left-skewed pattern in the residuals, suggesting that normality assumption of the model cannot be assumed. This indicated the need for a transformation
 
-![](images/ResidualBeforeTransformation.jpg){width="266"}
-
-![](images/histogram.jpg){width="264"}
+![](images/WechatIMG537.jpg)
 
 Therefore, we applied a logarithmic transformation to the weightChangePerWeek variable. After refitting the model using the transformed variable, the residual plot showed a more random scatter around zero, suggesting that the transformation had improved the fit and addressed the skewness in the data.
 
@@ -86,10 +84,10 @@ With low multicollinearity remaining in the dataset, we can now proceed with mor
 
 **Linear Assumption**
 
-1.  Linearity: The relationship between the independent variables chosen and weight change is linear
-2.  Independence: The dataset comprises data from 100 participants, and it is assumed that each participant's data represents an independent observation.
-3.  Homoscedasticity: The residual plot indicates a random scatter of points around zero, suggesting that the assumption of homoscedasticity is satisfied.
-4.  Normality of Residuals: The residuals are normally distributed.
+1.  **Linearity**: The relationship between the independent variables chosen and weight change is linear
+2.  **Independence**: The dataset comprises data from 100 participants, and it is assumed that each participant's data represents an independent observation.
+3.  **Homoscedasticity**: The residual plot indicates a random scatter of points around zero, suggesting that the assumption of homoscedasticity is satisfied.
+4.  **Normality of Residuals**: The residuals are normally distributed.
 
 ### **Statistical Methodology**
 
