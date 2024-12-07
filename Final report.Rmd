@@ -167,39 +167,6 @@ We applied multiple linear regression to investigate how variables like age, str
 
         -   **StressLevel** (p = 5.27e-09): Stress level is still a significant predictor.
 
-| Model   | Explanatory Variables      | P-value  |
-|---------|----------------------------|----------|
-| Model 1 | (Intercept)                | 0.5192   |
-|         | DailyCaloricSurplusDeficit | 0.0117   |
-|         | SleepQuality               | 2.16e-15 |
-|         | StressLevel                | 1.42e-08 |
-|         | Age                        | 0.4917   |
-|         | GenderF                    | 0.2693   |
-|         | CurrentWeightLbs           | 0.5321   |
-|         | PhysicalActivityLevel      | 0.7698   |
-| Model 2 | (Intercept)                | 0.3357   |
-|         | DailyCaloricSurplusDeficit | 0.00113  |
-|         | SleepQuality               | 4.64e-16 |
-|         | StressLevel                | 7.19e-09 |
-|         | Age                        | 0.4775   |
-|         | GenderF                    | 0.2716   |
-|         | CurrentWeightLbs           | 0.5562   |
-| Model 3 | (Intercept)                | 0.01778  |
-|         | DailyCaloricSurplusDeficit | 0.00125  |
-|         | SleepQuality               | 3.69e-16 |
-|         | StressLevel                | 5.66e-09 |
-|         | Age                        | 0.47514  |
-|         | GenderF                    | 0.32874  |
-| Model 4 | (Intercept)                | 0.01913  |
-|         | DailyCaloricSurplusDeficit | 0.00139  |
-|         | SleepQuality               | 2.58e-16 |
-|         | StressLevel                | 4.45e-09 |
-|         | GenderF                    | 0.34555  |
-| Model 5 | (Intercept)                | 0.00659  |
-|         | DailyCaloricSurplusDeficit | 0.00185  |
-|         | SleepQuality               | 2.78e-16 |
-|         | StressLevel                | 5.27e-09 |
-
 -   During the model selection process, we tested the significance of the predictors through backwards selection, The focus was on removing variables that were not statistically significant. This process involved analyzing the **p-values** of each predictor in the regression analysis.
 
     1.  **Significant Predictors**:\
@@ -220,7 +187,7 @@ We applied multiple linear regression to investigate how variables like age, str
 
 -   **QQ Plot**: The QQ plot confirmed the residuals followed a normal distribution, supporting the validity of the model.
 
-    ### ![]()![](images/QQ%20plot.jpg){width="298"}
+    ### ![](images/QQ%20plot.jpg){width="298"}
 
     ### **Model Refinement**
 
