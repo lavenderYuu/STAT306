@@ -213,15 +213,7 @@ The most important predictors of **expWeightCPW** (expected weight change) are *
 
 **Regression Diagnostics**: Residual plots after transformation indicated that the model assumptions were satisfied, with no discernible patterns in the residuals.
 
-![](images/residual plot.jpg)
-
-#### **Statistical Analysis**
-
--   **Mallow's Cp**: This measure confirmed that the final model was appropriately balanced between complexity and fit.
-
--   **Adjusted R-Squared**: The adjusted R-squared value suggested that the model explains a substantial proportion of the variance without overfitting.
-
--   **Residual Plot**: Residuals were randomly scattered, indicating no violations of linear regression assumptions.
+![](images/residual%20plot.jpg)
 
 -   **Boxplot:** The boxplot illustrates the distribution of weight change per week (expWeightCPW) across different physical activity levels (Sedentary, Lightly Active, Moderately Active, and Very Active). It reveals a clear trend where higher physical activity is associated with greater weight change. The Very Active group has the highest median weight change, while the Sedentary group exhibits the lowest. Additionally, the variability within the Very Active group is much higher, as indicated by a larger interquartile range and longer whiskers, suggesting that weight change among highly active individuals is more diverse. There are no significant outliers in any of the groups, indicating relatively consistent data within each category. Overall, the data suggests that physical activity level positively impacts weight change, but further statistical tests would be needed to confirm whether these differences are statistically significant.
 
@@ -229,9 +221,7 @@ The most important predictors of **expWeightCPW** (expected weight change) are *
 
 -   **QQ Plot**: The QQ plot confirmed the residuals followed a normal distribution, supporting the validity of the model.
 
-    ![]()![](images/QQ%20plot.jpg)
-
--   **Model Refinement**
+    ### ![]()![](images/QQ%20plot.jpg)**Model Refinement**
 
     As part of our model refinement process, we investigated potential **interaction effects** and **quadratic relationships** to determine if their inclusion would improve the model's performance.
 
@@ -242,10 +232,8 @@ The most important predictors of **expWeightCPW** (expected weight change) are *
 
         ![](images/WechatIMG516.jpg)
 
-        ![](images/interaction%2003.jpg)
-
--   **Quadratic Relationships**:\
-    To assess whether quadratic terms might enhance the model, we plotted scatterplots of covariates against the response variable (`weightChangePerWeek`). These plots showed no evident curvature, suggesting that relationships between covariates and weight change per week were linear. Therefore, quadratic terms were excluded from the model to maintain simplicity and interpretability.
+        ![](images/interaction%2003.jpg)**Quadratic Relationships**:\
+        To assess whether quadratic terms might enhance the model, we plotted scatterplots of covariates against the response variable (`weightChangePerWeek`). These plots showed no evident curvature, suggesting that relationships between covariates and weight change per week were linear. Therefore, quadratic terms were excluded from the model to maintain simplicity and interpretability.
 
     Here are the three plot of the **Quadratic:**
 
@@ -278,6 +266,8 @@ Our final model, evaluated using Leave-One-Out Cross-Validation (LOOCV), yielded
 2.  **Predictor Selection**: Despite our efforts to select significant predictors, it is possible that important variables influencing weight change---such as metabolic rate, hormonal factors, or detailed dietary patterns---were omitted due to the limitations of the dataset.
 
 3.  **Model Complexity**: The relatively high error and moderate predictive accuracy could also reflect the challenges of capturing complex, nonlinear relationships between weight change and influencing factors within a simple linear model.
+
+    ![](images/WechatIMG532.jpg)
 
 ### **Future Directions**
 
