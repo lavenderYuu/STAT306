@@ -324,7 +324,7 @@ ggplot(newCleanWeight, aes(x = DailyCaloricSurplusDeficit, y = expWeightCPW, col
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "PhysicalActivityLevel and SleepQuality",
-       x = "Stress Level",
+       x = "Daily Caloric Surplus Deficit",
        y = "Weight Change Per Week")
 ```
 
@@ -333,7 +333,7 @@ ggplot(newCleanWeight, aes(x = DailyCaloricSurplusDeficit, y = expWeightCPW, col
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "PhysicalActivityLevel and Stress Level",
-       x = "Stress Level",
+       x = "Daily Caloric Surplus Deficit",
        y = "Weight Change Per Week")
 ```
 ```{r}
