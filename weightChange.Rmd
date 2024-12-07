@@ -96,6 +96,30 @@ expWeight <- cleanWeight %>%
   subset(select = -c(weightChangePerWeek) )
 ```
 
+```{r, warning=FALSE}
+covariates <- c("Age", "Gender", "CurrentWeightLbs", "BMRCalories", 
+                "DailyCaloriesConsumed", "DailyCaloricSurplusDeficit", 
+                "PhysicalActivityLevel", "SleepQuality", "StressLevel", "FinalWeightLbs")
+
+plots <- lapply(covariates, function(covariate) {
+  if (is.numeric(expWeight[[covariate]])) {
+    ggplot(expWeight, aes(x = expWeight[[covariate]], y = expWeightCPW)) +
+      geom_point(alpha = 0.7) +
+      labs(title = paste("Relationship between", covariate, "and expWeightCPW"),
+           x = covariate, y = "expWeightCPW") +
+      theme_minimal()
+  } else {
+    ggplot(expWeight, aes(x = expWeight[[covariate]], y = expWeightCPW)) +
+      geom_boxplot() +
+      labs(title = paste("Relationship between", covariate, "and expWeightCPW"),
+           x = covariate, y = "expWeightCPW") +
+      theme_minimal()
+  }
+})
+
+plots
+```
+
 ## Check multicollinearity
 
 ```{r}
@@ -352,7 +376,7 @@ The scatter plot shows that Sleep Quality, Stress Level and weight Change Per We
 -   **Compare Models**: Use cross-validation or validation datasets.
 
 ```{r}
-
+n = 100
 MS_full <- sum(residuals(regfull)^2) / (n - length(coef(regfull))) 
 k <- length(coef(reg3))
 rss_p = sum(residuals(reg3)^2)
